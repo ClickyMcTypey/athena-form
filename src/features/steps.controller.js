@@ -1,4 +1,5 @@
 // src/features/steps.controller.js
+import { getRandomDelay } from "../utils/random.js";
 
 export function createStepsController({
   dom,
