@@ -9,7 +9,7 @@ export default defineConfig({
 
         rolldownOptions: {
             input: {
-                form: "src/app.js",
+                app: "src/app.js",
             },
             output: {
                 entryFileNames: "assets/[name].[hash].js",
