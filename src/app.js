@@ -62,6 +62,8 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     window.main = window.main || {};
+    window.main.form = window.main.form || {};
+    window.main.hubspotForm = window.main.hubspotForm || {};
 
     window.main.getCurrentStep = steps.getCurrentStep;
     window.main.getNextStep = steps.getNextStep;
@@ -69,9 +71,18 @@ document.addEventListener("DOMContentLoaded", () => {
     window.main.getSteps = steps.getSteps;
     window.main.switchToStep = steps.switchToStep;
     window.main.validateStep = validation.validateStep;
-
-    window.main.form = window.main.form || {};
+    window.main.hubspotForm.fetchData = hubspot.fetchData;
+    window.main.form.fetchHubspotOptions = fieldRenderer.renderField;
     window.main.form.updateProgressBar = steps.updateProgressBar;
+
+    window.main.form.initSteps = function () {
+        hubspot.renderCustomFields();
+        hubspot.removeOriginalHubspotForm();
+
+        if (window.main?.setup?.initListeners) {
+            window.main.setup.initListeners();
+        }
+    };
 
     console.log("Athena form app initialized");
 });
