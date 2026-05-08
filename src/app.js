@@ -44,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
         dom,
         animations,
         steps,
+        validation,
     };
 
     console.log("Athena form app initialized");
