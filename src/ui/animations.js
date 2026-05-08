@@ -1,184 +1,185 @@
 // src/ui/animations.js
 
 export function createAnimations({ config }) {
-    const animationTime = config.animationTime || 300;
+  const animationTime = config.animationTime || 300;
 
-    function refreshLenisSafe() {
-        if (typeof window.refreshLenis === "function") {
-            window.refreshLenis();
-        }
+  function refreshLenisSafe() {
+    if (typeof window.refreshLenis === "function") {
+      window.refreshLenis();
     }
+  }
 
-    return {
-        toggleBackButton(mode) {
-            const $mask = $("[mask=nav_back]");
+  return {
+    toggleBackButton(mode) {
+      const $mask = $("[mask=nav_back]");
 
-            if (mode === "show") {
-                const $button = $mask.children("div");
-                $mask.animate(
-                    { width: `${$button.outerWidth(true)}px` },
-                    animationTime
-                );
-            } else {
-                $mask.animate({ width: "0px" }, animationTime);
-            }
-        },
+      if (mode === "show") {
+        const $button = $mask.children("div");
+        $mask.animate(
+          { width: `${$button.outerWidth(true)}px` },
+          animationTime
+        );
+      } else {
+        $mask.animate({ width: "0px" }, animationTime);
+      }
+    },
 
-        toggleProgressBar(mode) {
-            const $mask = $("[mask=progressbar]");
+    toggleProgressBar(mode) {
+      const $mask = $("[mask=progressbar]");
 
-            if (mode === "show") {
-                const $bar = $mask.children("div");
-                $mask
-                    .delay(100)
-                    .animate(
-                        { height: `${$bar.outerHeight(true)}px` },
-                        animationTime + 100
-                    );
-            } else {
-                $mask.animate({ height: "0px" }, animationTime);
-            }
-        },
+      if (mode === "show") {
+        const $bar = $mask.children("div");
+        $mask
+          .delay(100)
+          .animate(
+            { height: `${$bar.outerHeight(true)}px` },
+            animationTime + 100
+          );
+      } else {
+        $mask.animate({ height: "0px" }, animationTime);
+      }
+    },
 
-        fadeInForm() {
-            $(".signup-b-content-default").animate({ opacity: 1 }, 1000);
-        },
+    toggleContinueButton(mode, targetStep) {
+      const $step = $(`[step="${targetStep}"]`);
 
-        fadeOutLeft(element) {
-            const $el = $(element);
+      const $continueMask = $step
+        .find("[mask=proceed]")
+        .not(":has([last])");
 
-            $el.animate({ left: "-10%", opacity: 0 }, animationTime, () => {
-                const originalDisplay = $el.css("display");
+      const $submitBtn = $step.find("[cmd=proceed][last]");
 
-                $el.attr("originalDisplay", originalDisplay);
-                $el.css({
-                    display: "none",
-                    left: "0",
-                });
-            });
-        },
+      $continueMask.finish();
 
-        fadeInLeft(element, callback) {
-            const $el = $(element);
-            const originalDisplay = $el.attr("originalDisplay");
+      const isSubmitStep = String(targetStep) === "info";
 
-            $el.css({
-                left: "-15%",
-                opacity: 0,
-                display: originalDisplay || "block",
-            });
+      if (mode === "show") {
+        if (isSubmitStep && $submitBtn.length) {
+          $submitBtn.prop("disabled", false).removeClass("disabled");
+          return;
+        }
 
-            $el
-                .delay(100)
-                .animate(
-                    { left: "0", opacity: 1 },
-                    animationTime + 100
-                )
-                .queue(function (next) {
-                    refreshLenisSafe();
+        const $continueButton = $continueMask.children("div");
 
-                    if (typeof callback === "function") {
-                        callback();
-                    }
+        $continueMask
+          .animate(
+            {
+              height: `${$continueButton.outerHeight(true)}px`,
+              opacity: 1,
+            },
+            animationTime
+          )
+          .queue(function (next) {
+            refreshLenisSafe();
+            next();
+          });
 
-                    next();
-                });
-        },
+        return;
+      }
 
-        fadeOutRight(element) {
-            const $el = $(element);
+      if (isSubmitStep && $submitBtn.length) {
+        $submitBtn.prop("disabled", true).addClass("disabled");
+        return;
+      }
 
-            $el.animate({ right: "-10%", opacity: 0 }, animationTime, () => {
-                const originalDisplay = $el.css("display");
+      $continueMask
+        .animate(
+          {
+            height: "0px",
+            opacity: 0,
+          },
+          animationTime
+        )
+        .queue(function (next) {
+          refreshLenisSafe();
+          next();
+        });
+    },
 
-                $el.attr("originalDisplay", originalDisplay);
-                $el.css({
-                    display: "none",
-                    right: "0",
-                });
-            });
-        },
+    fadeInForm() {
+      $(".signup-b-content-default").animate({ opacity: 1 }, 1000);
+    },
 
-        fadeInRight(element, callback) {
-            const $el = $(element);
-            const originalDisplay = $el.attr("originalDisplay");
+    fadeOutLeft(element) {
+      const $el = $(element);
 
-            $el.css({
-                right: "-15%",
-                opacity: 0,
-                display: originalDisplay || "block",
-            });
+      $el.animate({ left: "-10%", opacity: 0 }, animationTime, () => {
+        const originalDisplay = $el.css("display");
 
-            $el
-                .delay(100)
-                .animate(
-                    { right: "0", opacity: 1 },
-                    animationTime + 100
-                )
-                .queue(function (next) {
-                    refreshLenisSafe();
+        $el.attr("originalDisplay", originalDisplay);
+        $el.css({
+          display: "none",
+          left: "0",
+        });
+      });
+    },
 
-                    if (typeof callback === "function") {
-                        callback();
-                    }
+    fadeInLeft(element, callback) {
+      const $el = $(element);
+      const originalDisplay = $el.attr("originalDisplay");
 
-                    next();
-                });
-        },
-        toggleContinueButton(mode, targetStep) {
-            const $step = $(`[step="${targetStep}"]`);
+      $el.css({
+        left: "-15%",
+        opacity: 0,
+        display: originalDisplay || "block",
+      });
 
-            const $continueMask = $step
-                .find("[mask=proceed]")
-                .not(":has([last])");
+      $el
+        .delay(100)
+        .animate(
+          { left: "0", opacity: 1 },
+          animationTime + 100
+        )
+        .queue(function (next) {
+          refreshLenisSafe();
 
-            const $submitBtn = $step.find("[cmd=proceed][last]");
+          if (typeof callback === "function") {
+            callback();
+          }
 
-            $continueMask.finish();
+          next();
+        });
+    },
 
-            const isSubmitStep = targetStep === "info";
+    fadeOutRight(element) {
+      const $el = $(element);
 
-            if (mode === "show") {
-                if (isSubmitStep && $submitBtn.length) {
-                    $submitBtn.prop("disabled", false).removeClass("disabled");
-                    return;
-                }
+      $el.animate({ right: "-10%", opacity: 0 }, animationTime, () => {
+        const originalDisplay = $el.css("display");
 
-                const $continueButton = $continueMask.children("div");
+        $el.attr("originalDisplay", originalDisplay);
+        $el.css({
+          display: "none",
+          right: "0",
+        });
+      });
+    },
 
-                $continueMask
-                    .animate(
-                        {
-                            height: `${$continueButton.outerHeight(true)}px`,
-                            opacity: 1,
-                        },
-                        animationTime
-                    )
-                    .queue(function (next) {
-                        refreshLenisSafe();
-                        next();
-                    });
+    fadeInRight(element, callback) {
+      const $el = $(element);
+      const originalDisplay = $el.attr("originalDisplay");
 
-                return;
-            }
+      $el.css({
+        right: "-15%",
+        opacity: 0,
+        display: originalDisplay || "block",
+      });
 
-            if (isSubmitStep && $submitBtn.length) {
-                $submitBtn.prop("disabled", true).addClass("disabled");
-                return;
-            }
+      $el
+        .delay(100)
+        .animate(
+          { right: "0", opacity: 1 },
+          animationTime + 100
+        )
+        .queue(function (next) {
+          refreshLenisSafe();
 
-            $continueMask
-                .animate(
-                    {
-                        height: "0px",
-                        opacity: 0,
-                    },
-                    animationTime
-                )
-                .queue(function (next) {
-                    refreshLenisSafe();
-                    next();
-                });
-        },
-    };
+          if (typeof callback === "function") {
+            callback();
+          }
+
+          next();
+        });
+    },
+  };
 }
