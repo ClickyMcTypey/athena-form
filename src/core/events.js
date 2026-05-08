@@ -50,6 +50,11 @@ export function bindEvents({
     }
 
     function syncPhoneValue() {
+        if (window.AthenaForm?.phone?.syncHiddenPhoneField) {
+            window.AthenaForm.phone.syncHiddenPhoneField();
+            return;
+        }
+
         const phoneInstance = state.phoneInstance || window.iti;
 
         if (!phoneInstance || !window.intlTelInput?.utils) return;
