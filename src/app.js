@@ -7,6 +7,7 @@ import { createAnimations } from "./ui/animations.js";
 import { createStepsController } from "./features/steps.controller.js";
 import { createValidationService } from "./features/validation.service.js";
 import { bindEvents } from "./core/events.js";
+import { createPhoneService } from "./integrations/phone.service.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const dom = createDom();
@@ -28,6 +29,10 @@ document.addEventListener("DOMContentLoaded", () => {
         animations,
     });
 
+    const phone = createPhoneService({
+        state,
+    });
+
     bindEvents({
         state,
         steps,
@@ -42,6 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
         animations,
         steps,
         validation,
+        phone,
     };
 
     window.main = window.main || {};
