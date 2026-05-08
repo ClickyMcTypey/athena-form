@@ -47,5 +47,9 @@ document.addEventListener("DOMContentLoaded", () => {
         validation,
     };
 
+    window.main = window.main || {};
+
+    window.main.validateStep = validation.validateStep;
+
     console.log("Athena form app initialized");
 });
