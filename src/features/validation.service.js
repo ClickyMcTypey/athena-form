@@ -193,9 +193,12 @@ export function createValidationService({
 
       if (!isSolo) return;
 
-      if (state.phoneInstance && state.phoneInstance.isValidNumber()) {
-        $field.closest(".signup-input").removeClass("invalid");
-      } else if (window.iti && window.iti.isValidNumber()) {
+      const phoneIsValid =
+        window.AthenaForm?.phone?.isValid?.() ||
+        state.phoneInstance?.isValidNumber?.() ||
+        window.iti?.isValidNumber?.();
+
+      if (phoneIsValid) {
         $field.closest(".signup-input").removeClass("invalid");
       } else {
         $field.closest(".signup-input").addClass("invalid");
