@@ -30,12 +30,28 @@ export function createValidationService({
     });
   }
 
+  function getValidationWrapper($element) {
+    const $wrapper = $element.closest(".signup-input");
+
+    if ($wrapper.length) {
+      return $wrapper;
+    }
+
+    return $element.parent();
+  }
+
   function markInvalid($element) {
-    $element.parent().addClass("invalid");
+    getValidationWrapper($element).addClass("invalid");
   }
 
   function markValid($element) {
-    $element.parent().removeClass("invalid");
+    getValidationWrapper($element).removeClass("invalid");
+  }
+
+  function shouldValidateField($element) {
+    // In your form, solo="" means untouched / do not show validation yet.
+    // Once solo is removed, validation should run.
+    return $element.attr("solo") !== "";
   }
 
   function updateHdyhauSecondary(primaryValue, step) {
@@ -115,12 +131,20 @@ export function createValidationService({
 
     if (!$consent.length) return null;
 
+    const shouldValidate = $consent.toArray().some((el) => {
+      return shouldValidateField($(el));
+    });
+
+    if (!shouldValidate) {
+      return false;
+    }
+
     const isChecked = $consent.filter(":checked").length > 0;
 
     if (isChecked) {
-      $consent.parent().removeClass("invalid");
+      $consent.closest(".signup-input").removeClass("invalid");
     } else {
-      $consent.parent().addClass("invalid");
+      $consent.closest(".signup-input").addClass("invalid");
     }
 
     return isChecked;
@@ -157,9 +181,11 @@ export function createValidationService({
 
     $select.each(function () {
       const $field = $(this);
-      const isSolo = $field.attr("solo") === "";
 
-      if (!isSolo) return;
+      if (!shouldValidateField($field)) {
+        isValid = false;
+        return;
+      }
 
       const value = $field.val();
 
@@ -189,9 +215,11 @@ export function createValidationService({
 
     $phone.each(function () {
       const $field = $(this);
-      const isSolo = $field.attr("solo") === "";
 
-      if (!isSolo) return;
+      if (!shouldValidateField($field)) {
+        isValid = false;
+        return;
+      }
 
       const phoneIsValid =
         window.AthenaForm?.phone?.isValid?.() ||
@@ -218,11 +246,13 @@ export function createValidationService({
 
     $text.each(function () {
       const $field = $(this);
-      const isSolo = $field.attr("solo") === "";
 
-      if (!isSolo) return;
+      if (!shouldValidateField($field)) {
+        isValid = false;
+        return;
+      }
 
-      const value = $field.val();
+      const value = String($field.val() || "").trim();
 
       if (!value) {
         markInvalid($field);
