@@ -35,6 +35,13 @@ document.addEventListener("DOMContentLoaded", () => {
         state,
     });
 
+    const fieldRenderer = createFieldRenderer();
+
+    const hubspot = createHubspotService({
+        state,
+        fieldRenderer,
+    });
+
     bindEvents({
         state,
         steps,
@@ -50,6 +57,8 @@ document.addEventListener("DOMContentLoaded", () => {
         steps,
         validation,
         phone,
+        fieldRenderer,
+        hubspot,
     };
 
     window.main = window.main || {};
