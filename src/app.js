@@ -8,6 +8,8 @@ import { createStepsController } from "./features/steps.controller.js";
 import { createValidationService } from "./features/validation.service.js";
 import { bindEvents } from "./core/events.js";
 import { createPhoneService } from "./integrations/phone.service.js";
+import { createFieldRenderer } from "./ui/field-renderer.js";
+import { createHubspotService } from "./integrations/hubspot.service.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const dom = createDom();
