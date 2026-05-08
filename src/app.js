@@ -5,6 +5,7 @@ import { state } from "./core/state.js";
 import { createDom } from "./core/dom.js";
 import { createAnimations } from "./ui/animations.js";
 import { createStepsController } from "./features/steps.controller.js";
+import { createValidationService } from "./features/validation.service.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const dom = createDom();
