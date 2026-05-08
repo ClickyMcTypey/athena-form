@@ -10,6 +10,7 @@ import { bindEvents } from "./core/events.js";
 import { createPhoneService } from "./integrations/phone.service.js";
 import { createFieldRenderer } from "./ui/field-renderer.js";
 import { createHubspotService } from "./integrations/hubspot.service.js";
+import { createPrefillController } from "./features/prefill.controller.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const dom = createDom();
@@ -42,6 +43,11 @@ document.addEventListener("DOMContentLoaded", () => {
         fieldRenderer,
     });
 
+    const prefill = createPrefillController({
+        state,
+        config: FORM_CONFIG,
+    });
+
     bindEvents({
         state,
         steps,
@@ -59,6 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
         phone,
         fieldRenderer,
         hubspot,
+        prefill,
     };
 
     window.main = window.main || {};
