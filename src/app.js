@@ -21,6 +21,12 @@ document.addEventListener("DOMContentLoaded", () => {
         animations,
     });
 
+    const validation = createValidationService({
+        state,
+        config: FORM_CONFIG,
+        animations,
+    });
+
     window.main = window.main || {};
 
     window.main.getCurrentStep = steps.getCurrentStep;
