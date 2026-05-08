@@ -91,5 +91,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
+    window.main.updateUTMS = function () {
+        window.AthenaForm.prefill.updateUTMS();
+    };
+
     console.log("Athena form app initialized");
 });
