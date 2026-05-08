@@ -11,6 +11,8 @@ import { createPhoneService } from "./integrations/phone.service.js";
 import { createFieldRenderer } from "./ui/field-renderer.js";
 import { createHubspotService } from "./integrations/hubspot.service.js";
 import { createPrefillController } from "./features/prefill.controller.js";
+import { createAttributionService } from "./integrations/attribution.service.js";
+import { createReferralRockService } from "./integrations/referralrock.service.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const dom = createDom();
@@ -48,6 +50,13 @@ document.addEventListener("DOMContentLoaded", () => {
         config: FORM_CONFIG,
     });
 
+    const attribution = createAttributionService({
+        state,
+        config: FORM_CONFIG,
+    });
+
+    const referralRock = createReferralRockService();
+
     bindEvents({
         state,
         steps,
@@ -66,11 +75,15 @@ document.addEventListener("DOMContentLoaded", () => {
         fieldRenderer,
         hubspot,
         prefill,
+        attribution,
+        referralRock,
     };
 
     window.main = window.main || {};
     window.main.form = window.main.form || {};
     window.main.hubspotForm = window.main.hubspotForm || {};
+    window.excludedSteps = FORM_CONFIG.excludedAttributionSteps;
+
 
     window.main.getCurrentStep = steps.getCurrentStep;
     window.main.getNextStep = steps.getNextStep;
@@ -93,6 +106,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.main.updateUTMS = function () {
         window.AthenaForm.prefill.updateUTMS();
+    };
+
+    window.attribution = {
+        checkGA4: attribution.checkGA4,
+        retrieve: attribution.retrieve,
+        fire: attribution.fire,
+        bingEC: attribution.bingEC,
+        vowelCheck: attribution.vowelCheck,
+
+        fireRR() {
+            if (window.AthenaForm?.referralRock?.fireFromCurrentForm) {
+                return window.AthenaForm.referralRock.fireFromCurrentForm();
+            }
+
+            return false;
+        },
     };
 
     console.log("Athena form app initialized");
