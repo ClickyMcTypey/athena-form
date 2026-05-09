@@ -1,6 +1,8 @@
 // src/integrations/hubspot.service.js
 
 import { waitFor } from "../utils/wait-for.js";
+import { getCookie } from "../utils/cookies.js";
+import { sanitizeValue } from "../utils/sanitize.js";
 
 export function createHubspotService({
   state,
