@@ -156,5 +156,13 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
 
+    window.main = window.main || {};
+
+    window.main.chili = {
+        submit: chili.submit,
+        processSuccess: chili.processSuccess,
+    };
+
+
     console.log("Athena form app initialized");
 });
