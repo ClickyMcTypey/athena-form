@@ -81,6 +81,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function start() {
         try {
+
+            hubspot.createEmbeddedForm();
+
             await hubspot.waitForForm();
 
             hubspot.fetchData();
