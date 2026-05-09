@@ -57,4 +57,21 @@ export const FORM_CONFIG = {
   redirectUrls: {
     bannedCountry: "https://jobs.athena.com",
   },
+
+  branching: {
+    enabled: true,
+
+    rules: {
+      "1": {
+        field: "hbform_q1_worked_with_an_assistant",
+        fallbackBranch: "1",
+
+        map: {
+          "yes_i_have_one_now": "1",
+          "yes_but_not_currently": "1",
+          "no_never": "2",
+        },
+      },
+    },
+  },
 };
