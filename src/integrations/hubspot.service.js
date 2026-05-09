@@ -9,6 +9,21 @@ export function createHubspotService({
   config,
   fieldRenderer,
 }) {
+
+  function createEmbeddedForm() {
+    if (!window.hbspt?.forms?.create) {
+      throw new Error("HubSpot forms script is not loaded");
+    }
+
+    const { region, portalId, formId } = config.hubspot;
+
+    window.hbspt.forms.create({
+      region,
+      portalId,
+      formId,
+    });
+  }
+
   async function waitForForm() {
     const form = await waitFor(
       () => $(".hbspt-form form")[0],
@@ -174,12 +189,12 @@ export function createHubspotService({
   }
 
   return {
+    createEmbeddedForm,
     waitForForm,
     fetchData,
     renderCustomFields,
     removeOriginalHubspotForm,
     initCustomFields,
-
     captureIp,
     buildSubmissionPayload,
     submitForm,
