@@ -19,198 +19,184 @@ import { createSubmissionController } from "./features/submission.controller.js"
 import { createChiliService } from "./integrations/chili.service.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    const dom = createDom();
+  const dom = createDom();
 
-    const animations = createAnimations({
-        config: FORM_CONFIG,
-    });
+  const animations = createAnimations({
+    config: FORM_CONFIG,
+  });
 
-    const steps = createStepsController({
-        dom,
+  const steps = createStepsController({
+    dom,
+    state,
+    config: FORM_CONFIG,
+    animations,
+  });
+
+  const validation = createValidationService({
+    state,
+    config: FORM_CONFIG,
+    animations,
+  });
+
+  const phone = createPhoneService({
+    state,
+  });
+
+  const fieldRenderer = createFieldRenderer();
+
+  const hubspot = createHubspotService({
+    state,
+    config: FORM_CONFIG,
+    fieldRenderer,
+  });
+
+  const prefill = createPrefillController({
+    state,
+    config: FORM_CONFIG,
+  });
+
+  const attribution = createAttributionService({
+    state,
+    config: FORM_CONFIG,
+  });
+
+  const referralRock = createReferralRockService();
+
+  const chili = createChiliService({
+    state,
+    config: FORM_CONFIG,
+    steps,
+    attribution,
+    referralRock,
+  });
+
+  const submission = createSubmissionController({
+    state,
+    config: FORM_CONFIG,
+    steps,
+    animations,
+    hubspot,
+    attribution,
+  });
+
+  async function start() {
+    try {
+      await hubspot.waitForForm();
+
+      hubspot.fetchData();
+      hubspot.renderCustomFields();
+      hubspot.removeOriginalHubspotForm();
+
+      bindEvents({
         state,
-        config: FORM_CONFIG,
-        animations,
-    });
-
-    const validation = createValidationService({
-        state,
-        config: FORM_CONFIG,
-        animations,
-    });
-
-    const phone = createPhoneService({
-        state,
-    });
-
-    const fieldRenderer = createFieldRenderer();
-
-    const hubspot = createHubspotService({
-        state,
-        config: FORM_CONFIG,
-        fieldRenderer,
-    });
-
-    const prefill = createPrefillController({
-        state,
-        config: FORM_CONFIG,
-    });
-
-    const attribution = createAttributionService({
-        state,
-        config: FORM_CONFIG,
-    });
-
-    const submission = createSubmissionController({
-        state,
-        config: FORM_CONFIG,
-        steps,
-        animations,
-        hubspot,
-        attribution,
-    });
-
-    const referralRock = createReferralRockService();
-
-    const chili = createChiliService({
-        state,
-        config: FORM_CONFIG,
-        steps,
-        attribution,
-        referralRock,
-    });
-
-
-
-    bindEvents({
-        state,
-        steps,
-        validation,
-        animations,
-    });
-
-    window.AthenaForm = {
-        config: FORM_CONFIG,
-        state,
-        dom,
-        animations,
         steps,
         validation,
-        phone,
-        fieldRenderer,
-        hubspot,
-        prefill,
-        attribution,
-        referralRock,
-        submission,
-        chili,
-        start,
-    };
+        animations,
+      });
 
-    start();
+      startSystemLoops();
 
-    window.main = window.main || {};
-    window.main.form = window.main.form || {};
-    window.main.hubspotForm = window.main.hubspotForm || {};
-    window.excludedSteps = FORM_CONFIG.excludedAttributionSteps;
+      // Do not block form UI while capturing IP
+      hubspot.captureIp();
 
+      phone.init();
 
-    window.main.getCurrentStep = steps.getCurrentStep;
-    window.main.getNextStep = steps.getNextStep;
-    window.main.getPreviousStep = steps.getPreviousStep;
-    window.main.getSteps = steps.getSteps;
-    window.main.switchToStep = steps.switchToStep;
-    window.main.validateStep = validation.validateStep;
-    window.main.hubspotForm.fetchData = hubspot.fetchData;
-    window.main.form.fetchHubspotOptions = fieldRenderer.renderField;
-    window.main.form.updateProgressBar = steps.updateProgressBar;
+      $("#hdyhau_secondary").hide();
 
-    window.main.form.initSteps = function () {
-        hubspot.renderCustomFields();
-        hubspot.removeOriginalHubspotForm();
+      prefill.init();
 
-        if (window.main?.setup?.initListeners) {
-            window.main.setup.initListeners();
-        }
-    };
+      animations.fadeInForm();
 
-    window.main.updateUTMS = function () {
-        window.AthenaForm.prefill.updateUTMS();
-    };
+      $("[step='1']")
+        .delay(100)
+        .queue(function (next) {
+          animations.fadeInLeft($(this), steps.stepInit);
+          next();
+        });
 
-    window.attribution = {
-        checkGA4: attribution.checkGA4,
-        retrieve: attribution.retrieve,
-        fire: attribution.fire,
-        bingEC: attribution.bingEC,
-        vowelCheck: attribution.vowelCheck,
-
-        fireRR() {
-            if (window.AthenaForm?.referralRock?.fireFromCurrentForm) {
-                return window.AthenaForm.referralRock.fireFromCurrentForm();
-            }
-
-            return false;
-        },
-    };
-
-    window.main = window.main || {};
-    window.main.form = window.main.form || {};
-
-    window.main.form.s = function () {
-        return window.AthenaForm.submission.submit();
-    };
-
-
-    window.main = window.main || {};
-
-    window.main.chili = {
-        submit: chili.submit,
-        processSuccess: chili.processSuccess,
-    };
-
-
-    console.log("Athena form app initialized");
-
-    async function start() {
-        try {
-            await hubspot.waitForForm();
-
-            hubspot.fetchData();
-            hubspot.renderCustomFields();
-            hubspot.removeOriginalHubspotForm();
-
-            bindEvents({
-                state,
-                steps,
-                validation,
-                animations,
-            });
-
-            startSystemLoops();
-
-            // Do not block the form UI while capturing IP
-            hubspot.captureIp();
-
-            phone.init();
-
-            $("#hdyhau_secondary").hide();
-
-            prefill.init();
-
-            animations.fadeInForm();
-
-            $("[step='1']")
-                .delay(100)
-                .queue(function (next) {
-                    animations.fadeInLeft($(this), steps.stepInit);
-                    next();
-                });
-
-            console.log("Athena form started");
-        } catch (error) {
-            console.error("Athena form failed to start:", error);
-        }
+      console.log("Athena form started");
+    } catch (error) {
+      console.error("Athena form failed to start:", error);
     }
+  }
 
+  window.AthenaForm = {
+    config: FORM_CONFIG,
+    state,
+    dom,
+    animations,
+    steps,
+    validation,
+    phone,
+    fieldRenderer,
+    hubspot,
+    prefill,
+    attribution,
+    referralRock,
+    submission,
+    chili,
+    start,
+  };
 
+  // Compatibility shell
+  window.excludedSteps = FORM_CONFIG.excludedAttributionSteps;
+
+  window.main = window.main || {};
+  window.main.form = window.main.form || {};
+  window.main.hubspotForm = window.main.hubspotForm || {};
+
+  window.main.getCurrentStep = () => window.AthenaForm.steps.getCurrentStep();
+  window.main.getNextStep = () => window.AthenaForm.steps.getNextStep();
+  window.main.getPreviousStep = () => window.AthenaForm.steps.getPreviousStep();
+  window.main.getSteps = () => window.AthenaForm.steps.getSteps();
+  window.main.switchToStep = (step) => window.AthenaForm.steps.switchToStep(step);
+  window.main.validateStep = (step) => window.AthenaForm.validation.validateStep(step);
+
+  window.main.hubspotForm.fetchData = () => window.AthenaForm.hubspot.fetchData();
+  window.main.form.fetchHubspotOptions = (fieldName) =>
+    window.AthenaForm.fieldRenderer.renderField(fieldName);
+  window.main.form.updateProgressBar = () =>
+    window.AthenaForm.steps.updateProgressBar();
+
+  window.main.form.initSteps = function () {
+    window.AthenaForm.hubspot.renderCustomFields();
+    window.AthenaForm.hubspot.removeOriginalHubspotForm();
+
+    if (window.main?.setup?.initListeners) {
+      window.main.setup.initListeners();
+    }
+  };
+
+  window.main.updateUTMS = function () {
+    return window.AthenaForm.prefill.updateUTMS();
+  };
+
+  window.main.form.s = function () {
+    return window.AthenaForm.submission.submit();
+  };
+
+  window.main.chili = {
+    submit: () => window.AthenaForm.chili.submit(),
+    processSuccess: (data) => window.AthenaForm.chili.processSuccess(data),
+  };
+
+  window.attribution = {
+    checkGA4: attribution.checkGA4,
+    retrieve: attribution.retrieve,
+    fire: attribution.fire,
+    bingEC: attribution.bingEC,
+    vowelCheck: attribution.vowelCheck,
+
+    fireRR() {
+      if (window.AthenaForm?.referralRock?.fireFromCurrentForm) {
+        return window.AthenaForm.referralRock.fireFromCurrentForm();
+      }
+
+      return false;
+    },
+  };
+
+  console.log("Athena form app initialized");
+
+  start();
 });
