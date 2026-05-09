@@ -63,13 +63,21 @@ export const FORM_CONFIG = {
 
     rules: {
       "1": {
-        field: "hbform_q1_worked_with_an_assistant",
+        field: "your_radio_field_name",
         fallbackBranch: "1",
 
         map: {
-          "yes_i_have_one_now": "1",
-          "yes_but_not_currently": "1",
-          "no_never": "2",
+          "yes": "1",
+          "not_sure": "1",
+        },
+
+        experimentOverrides: {
+          "no_never": {
+            globalName: "__MIDABRANCH_090526",
+            storageKey: "mida_branch_090526",
+            allowedBranches: ["1", "2"],
+            fallbackBranch: "1",
+          },
         },
       },
     },
