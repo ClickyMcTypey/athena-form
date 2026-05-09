@@ -13,6 +13,7 @@ import { createHubspotService } from "./integrations/hubspot.service.js";
 import { createPrefillController } from "./features/prefill.controller.js";
 import { createAttributionService } from "./integrations/attribution.service.js";
 import { createReferralRockService } from "./integrations/referralrock.service.js";
+import { createSubmissionController } from "./features/submission.controller.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const dom = createDom();
@@ -56,6 +57,15 @@ document.addEventListener("DOMContentLoaded", () => {
         config: FORM_CONFIG,
     });
 
+    const submission = createSubmissionController({
+        state,
+        config: FORM_CONFIG,
+        steps,
+        animations,
+        hubspot,
+        attribution,
+    });
+
     const referralRock = createReferralRockService();
 
     bindEvents({
@@ -78,6 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
         prefill,
         attribution,
         referralRock,
+        submission,
     };
 
     window.main = window.main || {};
