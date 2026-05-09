@@ -182,8 +182,9 @@ export function bindEvents({
             $button.data("is-submitting", true);
             $button.prop("disabled", true);
 
-            // temporary bridge until we extract submission.controller.js
-            if (window.main?.form?.s) {
+            if (window.AthenaForm?.submission?.submit) {
+                window.AthenaForm.submission.submit();
+            } else if (window.main?.form?.s) {
                 window.main.form.s();
             }
 
