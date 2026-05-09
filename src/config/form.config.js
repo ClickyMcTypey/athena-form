@@ -87,7 +87,7 @@ export const FORM_CONFIG = {
     enabled: true,
 
     // Toggle this whenever you want RR debug mode
-    debug: false,
+    debug: true,
 
     paramName: "REFERRALCODE",
     cookieName: "REFERRALCODE",
