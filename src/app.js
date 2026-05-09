@@ -17,6 +17,9 @@ import { createAttributionService } from "./integrations/attribution.service.js"
 import { createReferralRockService } from "./integrations/referralrock.service.js";
 import { createSubmissionController } from "./features/submission.controller.js";
 import { createChiliService } from "./integrations/chili.service.js";
+import { createBranchController } from "./features/branch.controller.js";
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
     const dom = createDom();
@@ -30,6 +33,11 @@ document.addEventListener("DOMContentLoaded", () => {
         state,
         config: FORM_CONFIG,
         animations,
+    });
+
+    const branching = createBranchController({
+        state,
+        config: FORM_CONFIG,
     });
 
     const validation = createValidationService({
@@ -108,6 +116,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             prefill.init();
 
+            branching.init();
+
             animations.fadeInForm();
 
             $("[step='1']")
@@ -138,6 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
         referralRock,
         submission,
         chili,
+        branching,
         start,
     };
 
