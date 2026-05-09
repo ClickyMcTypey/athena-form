@@ -210,8 +210,9 @@ export function bindEvents({
 
         state.isChiliSubmitting = true;
 
-        // temporary bridge until we extract chili.service.js
-        if (window.main?.chili?.submit) {
+        if (window.AthenaForm?.chili?.submit) {
+            window.AthenaForm.chili.submit();
+        } else if (window.main?.chili?.submit) {
             window.main.chili.submit();
         }
     });

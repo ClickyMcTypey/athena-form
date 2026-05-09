@@ -78,12 +78,14 @@ export function createSubmissionController({
 
       steps.switchToStep("calendar");
 
-      // Temporary bridge until ChiliPiper is extracted
-      if (window.main?.chili?.submit) {
+      if (window.AthenaForm?.chili?.submit) {
+        window.AthenaForm.chili.submit();
+      } else if (window.main?.chili?.submit) {
         window.main.chili.submit();
       } else {
         console.warn("ChiliPiper submit handler not found");
       }
+
     } catch (error) {
       console.error("Submission error:", error);
 
