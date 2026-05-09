@@ -97,6 +97,31 @@ export function createBranchController({
       return rule.fallbackBranch || null;
     }
 
+    const override = rule.experimentOverrides?.[selectedValue];
+
+    if (override) {
+      const globalValue =
+        window[override.globalName] ||
+        sessionStorage.getItem(override.storageKey);
+
+      if (
+        globalValue &&
+        override.allowedBranches?.includes(String(globalValue))
+      ) {
+        return String(globalValue);
+      }
+
+      return override.fallbackBranch || rule.fallbackBranch || "1";
+    }
+
+    const mappedBranch = rule.map?.[selectedValue];
+
+    if (mappedBranch) {
+      return mappedBranch;
+    }
+
+    return rule.fallbackBranch || "1";
+
     const mappedBranch = rule.map?.[selectedValue];
 
     if (mappedBranch) {
