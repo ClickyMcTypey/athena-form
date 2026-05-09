@@ -162,7 +162,7 @@ export function createPrefillController({
       if (!$targetStep.length) return;
 
       // Matches your current behavior: hide/skip prefilled steps
-      $targetStep.attr("skip", "");
+      $targetStep.attr("skip", "").attr("prefilled", "");
 
       const $inputs = $targetStep.find("input");
       const mode = $inputs.first().attr("type");
