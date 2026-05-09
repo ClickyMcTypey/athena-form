@@ -94,7 +94,7 @@ export function createBranchController({
     const selectedValue = getSelectedValueForRule(stepName, rule);
 
     if (!selectedValue) {
-      return rule.fallbackBranch || null;
+      return rule.fallbackBranch || "1";
     }
 
     const override = rule.experimentOverrides?.[selectedValue];
@@ -121,14 +121,6 @@ export function createBranchController({
     }
 
     return rule.fallbackBranch || "1";
-
-    const mappedBranch = rule.map?.[selectedValue];
-
-    if (mappedBranch) {
-      return mappedBranch;
-    }
-
-    return rule.fallbackBranch || null;
   }
 
   function applyFromStep(stepName) {
