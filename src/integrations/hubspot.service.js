@@ -6,6 +6,7 @@ import { sanitizeValue } from "../utils/sanitize.js";
 
 export function createHubspotService({
   state,
+  config,
   fieldRenderer,
 }) {
   async function waitForForm() {
@@ -67,11 +68,120 @@ export function createHubspotService({
     removeOriginalHubspotForm();
   }
 
+  async function captureIp() {
+    try {
+      const response = await fetch("https://api.ipify.org?format=json");
+      const data = await response.json();
+
+      state.userIp = data.ip;
+      window.a = data.ip; // temporary old-code compatibility
+
+      return data.ip;
+    } catch (error) {
+      console.error("Could not capture IP", error);
+      return null;
+    }
+  }
+
+  function formFieldsToHSJSON(form) {
+    const fieldArray = [];
+    const formData = new FormData(form);
+
+    for (const [name, rawValue] of formData.entries()) {
+      fieldArray.push({
+        name,
+        value: sanitizeValue(rawValue),
+      });
+    }
+
+    return fieldArray;
+  }
+
+  function buildContext() {
+    const hutk = getCookie("hubspotutk");
+
+    state.hubspotUtk = hutk;
+    window.ut = hutk; // temporary old-code compatibility
+
+    const context = {
+      hutk,
+      pageUri: window.location.href,
+      pageName: document.title,
+    };
+
+    if (state.userIp) {
+      context.ipAddress = state.userIp;
+    }
+
+    return context;
+  }
+
+  function buildSubmissionPayload(form = document.querySelector("#athn_form")) {
+    if (!form) {
+      throw new Error("Form #athn_form not found");
+    }
+
+    return {
+      submittedAt: Date.now(),
+      fields: formFieldsToHSJSON(form),
+      context: buildContext(),
+      legalConsentOptions: {
+        consent: {
+          consentToProcess: true,
+          text: "I agree to receive email and text messages from Athena. Message and data rates may apply.",
+          communications: [],
+        },
+      },
+    };
+  }
+
+  function getSubmitUrl() {
+    const { submitBaseUrl, portalId, formId } = config.hubspot;
+
+    return `${submitBaseUrl}/${portalId}/${formId}`;
+  }
+
+  async function submitForm(payload) {
+    const response = await fetch(getSubmitUrl(), {
+      method: "POST",
+      mode: "cors",
+      cache: "no-cache",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      redirect: "follow",
+      referrerPolicy: "no-referrer",
+      body: JSON.stringify(payload),
+    });
+
+    let data = null;
+
+    try {
+      data = await response.json();
+    } catch (error) {
+      data = null;
+    }
+
+    if (!response.ok) {
+      const error = new Error("HubSpot submission failed");
+      error.response = response;
+      error.data = data;
+      throw error;
+    }
+
+    return data;
+  }
+
   return {
     waitForForm,
     fetchData,
     renderCustomFields,
     removeOriginalHubspotForm,
     initCustomFields,
+
+    captureIp,
+    buildSubmissionPayload,
+    submitForm,
   };
 }
