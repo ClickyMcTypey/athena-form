@@ -63,7 +63,7 @@ export const FORM_CONFIG = {
 
     rules: {
       "1": {
-        field: "your_radio_field_name",
+        field: "hbform_q1_worked_with_an_assistant",
         fallbackBranch: "1",
 
         map: {
