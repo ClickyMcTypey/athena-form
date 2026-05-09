@@ -14,6 +14,7 @@ import { createPrefillController } from "./features/prefill.controller.js";
 import { createAttributionService } from "./integrations/attribution.service.js";
 import { createReferralRockService } from "./integrations/referralrock.service.js";
 import { createSubmissionController } from "./features/submission.controller.js";
+import { createChiliService } from "./integrations/chili.service.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const dom = createDom();
@@ -68,6 +69,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const referralRock = createReferralRockService();
 
+    const chili = createChiliService({
+        state,
+        config: FORM_CONFIG,
+        steps,
+        attribution,
+        referralRock,
+    });
+
+
+
     bindEvents({
         state,
         steps,
@@ -89,6 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
         attribution,
         referralRock,
         submission,
+        chili,
     };
 
     window.main = window.main || {};
