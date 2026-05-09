@@ -46,6 +46,9 @@ export function createSubmissionController({
 
     state.isSubmitting = true;
 
+    state.successNoBook = false;
+    state.chiliData = null;
+
     try {
       if (hasHoneypotValue()) {
         steps.switchToStep("error");
