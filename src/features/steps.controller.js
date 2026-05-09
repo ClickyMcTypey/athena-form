@@ -7,6 +7,11 @@ export function createStepsController({
   config,
   animations,
 }) {
+
+  function shouldHideBackButton(stepName) {
+    return config.noBackButtonSteps?.includes(String(stepName));
+  }
+
   function getVisibleStepElements() {
     return Object.values($("[step]").not("[skip]"));
   }
@@ -90,6 +95,10 @@ export function createStepsController({
 
     const currentStep = getCurrentStep();
 
+    if (shouldHideBackButton(currentStep)) {
+      animations.toggleBackButton("hide");
+    }
+
     if (currentStep === "loading") {
       const xp = Math.floor(Math.random() * 4) + 3;
       $("#xp_num").html(xp);
@@ -145,6 +154,10 @@ export function createStepsController({
       animations.toggleProgressBar("show");
     } else {
       animations.toggleProgressBar("hide");
+    }
+
+    if (shouldHideBackButton(targetStepName)) {
+      animations.toggleBackButton("hide");
     }
 
     if (currentStepIndex > destinationStepIndex) {

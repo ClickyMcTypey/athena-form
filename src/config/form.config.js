@@ -49,6 +49,11 @@ export const FORM_CONFIG = {
     "gt",
   ],
 
+  noBackButtonSteps: [
+    "loading",
+    "email",
+  ],
+
   redirectUrls: {
     bannedCountry: "https://jobs.athena.com",
   },
