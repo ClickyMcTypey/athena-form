@@ -42,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const hubspot = createHubspotService({
         state,
+        config: FORM_CONFIG,
         fieldRenderer,
     });
 
