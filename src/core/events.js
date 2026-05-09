@@ -5,6 +5,7 @@ export function bindEvents({
     steps,
     validation,
     animations,
+    branching,
 }) {
     function getStepNameFromElement(element) {
         return $(element).closest("[step]").attr("step");
@@ -94,6 +95,8 @@ export function bindEvents({
 
             maybeShowBackButton();
             fireStepAttribution();
+
+            branching?.applyFromStep(stepName);
 
             const nextStep = steps.getNextStep();
             if (nextStep) {
@@ -194,6 +197,8 @@ export function bindEvents({
         if (!state.nextLocked) {
             maybeShowBackButton();
             fireStepAttribution();
+
+            branching?.applyFromStep(steps.getCurrentStep());
 
             const nextStep = steps.getNextStep();
 
