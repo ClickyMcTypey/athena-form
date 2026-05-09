@@ -67,8 +67,8 @@ export const FORM_CONFIG = {
         fallbackBranch: "1",
 
         map: {
-          "yes": "1",
-          "not_sure": "1",
+          "yes_but_not_currently": "1",
+          "yes_i_have_one_now": "1",
         },
 
         experimentOverrides: {
