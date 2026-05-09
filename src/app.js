@@ -142,67 +142,22 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // Compatibility shell
-    window.excludedSteps = FORM_CONFIG.excludedAttributionSteps;
 
-    window.main = window.main || {};
-    window.main.form = window.main.form || {};
-    window.main.hubspotForm = window.main.hubspotForm || {};
+    // window.attribution = {
+    //     checkGA4: attribution.checkGA4,
+    //     retrieve: attribution.retrieve,
+    //     fire: attribution.fire,
+    //     bingEC: attribution.bingEC,
+    //     vowelCheck: attribution.vowelCheck,
 
-    window.main.getCurrentStep = () => window.AthenaForm.steps.getCurrentStep();
-    window.main.getNextStep = () => window.AthenaForm.steps.getNextStep();
-    window.main.getPreviousStep = () => window.AthenaForm.steps.getPreviousStep();
-    window.main.getSteps = () => window.AthenaForm.steps.getSteps();
-    window.main.switchToStep = (step) => window.AthenaForm.steps.switchToStep(step);
-    window.main.validateStep = (step) => window.AthenaForm.validation.validateStep(step);
+    //     fireRR() {
+    //         if (window.AthenaForm?.referralRock?.fireFromCurrentForm) {
+    //             return window.AthenaForm.referralRock.fireFromCurrentForm();
+    //         }
 
-    window.main.hubspotForm.fetchData = () => window.AthenaForm.hubspot.fetchData();
-    window.main.form.fetchHubspotOptions = (fieldName) =>
-        window.AthenaForm.fieldRenderer.renderField(fieldName);
-    window.main.form.updateProgressBar = () =>
-        window.AthenaForm.steps.updateProgressBar();
-
-    window.main.form.initSteps = function () {
-        window.AthenaForm.hubspot.renderCustomFields();
-        window.AthenaForm.hubspot.removeOriginalHubspotForm();
-
-        if (window.main?.setup?.initListeners) {
-            window.main.setup.initListeners();
-        }
-    };
-
-    window.main.updateUTMS = function () {
-        return window.AthenaForm.prefill.updateUTMS();
-    };
-
-    window.main.form.s = function () {
-        return window.AthenaForm.submission.submit();
-    };
-
-    window.main.chili = {
-        submit: function () {
-            return window.AthenaForm?.chili?.submit?.();
-        },
-
-        processSuccess: function (data) {
-            return window.AthenaForm?.chili?.processSuccess?.(data);
-        },
-    };
-
-    window.attribution = {
-        checkGA4: attribution.checkGA4,
-        retrieve: attribution.retrieve,
-        fire: attribution.fire,
-        bingEC: attribution.bingEC,
-        vowelCheck: attribution.vowelCheck,
-
-        fireRR() {
-            if (window.AthenaForm?.referralRock?.fireFromCurrentForm) {
-                return window.AthenaForm.referralRock.fireFromCurrentForm();
-            }
-
-            return false;
-        },
-    };
+    //         return false;
+    //     },
+    // };
 
     console.log("Athena form app initialized");
 
