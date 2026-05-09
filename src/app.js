@@ -1,12 +1,14 @@
 // src/app.js
 
+window.__ATHENA_NEW_APP__ = true;
+
 import { FORM_CONFIG } from "./config/form.config.js";
 import { state } from "./core/state.js";
 import { createDom } from "./core/dom.js";
 import { createAnimations } from "./ui/animations.js";
 import { createStepsController } from "./features/steps.controller.js";
 import { createValidationService } from "./features/validation.service.js";
-import { bindEvents } from "./core/events.js";
+import { bindEvents, startSystemLoops } from "./core/events.js";
 import { createPhoneService } from "./integrations/phone.service.js";
 import { createFieldRenderer } from "./ui/field-renderer.js";
 import { createHubspotService } from "./integrations/hubspot.service.js";
@@ -101,7 +103,10 @@ document.addEventListener("DOMContentLoaded", () => {
         referralRock,
         submission,
         chili,
+        start,
     };
+
+    start();
 
     window.main = window.main || {};
     window.main.form = window.main.form || {};
@@ -165,4 +170,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     console.log("Athena form app initialized");
+
+    async function start() {
+        try {
+            await hubspot.waitForForm();
+
+            hubspot.fetchData();
+            hubspot.renderCustomFields();
+            hubspot.removeOriginalHubspotForm();
+
+            bindEvents({
+                state,
+                steps,
+                validation,
+                animations,
+            });
+
+            startSystemLoops();
+
+            // Do not block the form UI while capturing IP
+            hubspot.captureIp();
+
+            phone.init();
+
+            $("#hdyhau_secondary").hide();
+
+            prefill.init();
+
+            animations.fadeInForm();
+
+            $("[step='1']")
+                .delay(100)
+                .queue(function (next) {
+                    animations.fadeInLeft($(this), steps.stepInit);
+                    next();
+                });
+
+            console.log("Athena form started");
+        } catch (error) {
+            console.error("Athena form failed to start:", error);
+        }
+    }
+
+
 });

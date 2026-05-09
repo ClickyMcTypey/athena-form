@@ -235,3 +235,25 @@ export function bindEvents({
         state.backLocked = true;
     });
 }
+
+export function startSystemLoops() {
+    if (typeof window.refreshLenis === "function") {
+        window.refresher = setInterval(function () {
+            window.refreshLenis();
+        }, 500);
+    }
+
+    window.autofillPoll = setInterval(() => {
+        const $search = $(":-internal-autofill-selected");
+
+        if ($search.length) {
+            const currentStep = window.AthenaForm?.steps?.getCurrentStep?.();
+
+            if (currentStep) {
+                $(`[step="${currentStep}"]`)
+                    .find("input, select")
+                    .removeAttr("solo");
+            }
+        }
+    }, 500);
+}
