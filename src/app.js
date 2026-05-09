@@ -68,7 +68,9 @@ document.addEventListener("DOMContentLoaded", () => {
         config: FORM_CONFIG,
     });
 
-    const referralRock = createReferralRockService();
+    const referralRock = createReferralRockService({
+        config: FORM_CONFIG,
+    });
 
     const chili = createChiliService({
         state,
@@ -116,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
             $("#hdyhau_secondary").hide();
 
             prefill.init();
-
+            referralRock.captureReferralCode();
             branching.init();
 
             animations.fadeInForm();
