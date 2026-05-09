@@ -103,6 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 steps,
                 validation,
                 animations,
+                branching,
             });
 
             startSystemLoops();
