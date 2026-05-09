@@ -136,5 +136,13 @@ document.addEventListener("DOMContentLoaded", () => {
         },
     };
 
+    window.main = window.main || {};
+    window.main.form = window.main.form || {};
+
+    window.main.form.s = function () {
+        return window.AthenaForm.submission.submit();
+    };
+
+
     console.log("Athena form app initialized");
 });
