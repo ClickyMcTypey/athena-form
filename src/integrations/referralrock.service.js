@@ -113,6 +113,10 @@ export function createReferralRockService({ config }) {
     });
   }
 
+  function checkRRCodeLegacy() {
+    return getReferralCode() || false;
+  }
+
   return {
     captureReferralCode,
     getReferralCode,
