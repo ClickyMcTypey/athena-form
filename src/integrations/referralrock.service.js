@@ -123,5 +123,8 @@ export function createReferralRockService({ config }) {
     hasReferralCode,
     fireConversion,
     fireFromCurrentForm,
+
+    // legacy compatibility
+    checkRRCodeLegacy,
   };
 }
