@@ -173,6 +173,13 @@ document.addEventListener("DOMContentLoaded", () => {
     //     },
     // };
 
+    //RR Old Code Bridge
+    if (FORM_CONFIG.referralRock?.exposeLegacyGlobal) {
+        window.checkRRCode = function () {
+            return window.AthenaForm?.referralRock?.checkRRCodeLegacy?.() || false;
+        };
+    }
+
     console.log("Athena form app initialized");
 
     start();
