@@ -84,15 +84,17 @@ export const FORM_CONFIG = {
   },
   referralRock: {
     enabled: true,
-    debug: true,
+    debug: false,
 
     paramName: "REFERRALCODE",
     cookieName: "REFERRALCODE",
     legacyCookieName: "_athn",
 
+    utmCookieName: "_athn_utms",
+    eligibleCookieName: "_athn_rr_eligible",
+
     cookieMaxAge: 60 * 60 * 24 * 30,
 
-    // Keep this true while production still depends on window.checkRRCode
     exposeLegacyGlobal: true,
   },
 };
