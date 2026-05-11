@@ -21,7 +21,7 @@ export function createReferralRockService({ config }) {
   }
 
   function setCookie(name, value) {
-    if (!name || !value) return;
+    if (!name || value === null || value === undefined || value === "") return;
 
     const maxAge = rrConfig.cookieMaxAge || 60 * 60 * 24 * 30;
 
@@ -37,6 +37,13 @@ export function createReferralRockService({ config }) {
     return params.get(paramName);
   }
 
+  function getStoredReferralCode() {
+    const cookieName = rrConfig.cookieName || "REFERRALCODE";
+    const legacyCookieName = rrConfig.legacyCookieName || "_athn";
+
+    return getCookie(cookieName) || getCookie(legacyCookieName) || null;
+  }
+
   function captureReferralCode() {
     if (!isEnabled()) return null;
 
@@ -45,7 +52,6 @@ export function createReferralRockService({ config }) {
     if (urlReferralCode) {
       setCookie(rrConfig.cookieName || "REFERRALCODE", urlReferralCode);
 
-      // Optional migration support for the old cookie
       if (rrConfig.legacyCookieName) {
         setCookie(rrConfig.legacyCookieName, urlReferralCode);
       }
@@ -53,19 +59,26 @@ export function createReferralRockService({ config }) {
       return urlReferralCode;
     }
 
-    return (
-      getCookie(rrConfig.cookieName || "REFERRALCODE") ||
-      getCookie(rrConfig.legacyCookieName) ||
-      null
-    );
+    return getStoredReferralCode();
   }
 
   function getReferralCode() {
-    return captureReferralCode();
+    return getStoredReferralCode();
   }
 
   function hasReferralCode() {
     return Boolean(getReferralCode());
+  }
+
+  function isReferralRockEligible() {
+    const eligibleCookieName =
+      rrConfig.eligibleCookieName || "_athn_rr_eligible";
+
+    if (window.AthenaAttributionCapture?.isReferralRockEligible) {
+      return window.AthenaAttributionCapture.isReferralRockEligible();
+    }
+
+    return getCookie(eligibleCookieName) === "1";
   }
 
   function fireConversion({
@@ -86,6 +99,11 @@ export function createReferralRockService({ config }) {
       return false;
     }
 
+    if (!isReferralRockEligible()) {
+      console.log("ReferralRock skipped: referral is not eligible");
+      return false;
+    }
+
     window.referralJS =
       window.referralJS !== null && window.referralJS !== undefined
         ? window.referralJS
@@ -100,6 +118,11 @@ export function createReferralRockService({ config }) {
         referralCode: finalReferralCode,
       },
     };
+
+    console.log("ReferralRock fired", {
+      debug: Boolean(rrConfig.debug),
+      referralCode: finalReferralCode,
+    });
 
     return true;
   }
@@ -121,6 +144,7 @@ export function createReferralRockService({ config }) {
     captureReferralCode,
     getReferralCode,
     hasReferralCode,
+    isReferralRockEligible,
     fireConversion,
     fireFromCurrentForm,
 
