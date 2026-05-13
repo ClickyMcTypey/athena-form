@@ -118,7 +118,11 @@ document.addEventListener("DOMContentLoaded", () => {
             $("#hdyhau_secondary").hide();
 
             prefill.init();
-            referralRock.captureReferralCode();
+
+            if (referralRock?.captureReferralCode) {
+                referralRock.captureReferralCode();
+            }
+
             branching.init();
 
             animations.fadeInForm();
