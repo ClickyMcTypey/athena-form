@@ -168,7 +168,6 @@ END:VCALENDAR`;
         state.successNoBook = true;
 
         attribution.fire("success");
-
         processSuccess(data);
       },
 
