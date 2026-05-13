@@ -210,14 +210,16 @@ export function bindEvents({
         }
     });
 
-    $(document).on("click.athenaForm", "[cmd='chili_retry']", function () {
-        if (state.isChiliSubmitting) return;
-
-        state.isChiliSubmitting = true;
+    $(document).on("click.athenaForm", "[cmd='chili_retry']", function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
 
         if (window.AthenaForm?.chili?.submit) {
             window.AthenaForm.chili.submit();
-        } else if (window.main?.chili?.submit) {
+            return;
+        }
+
+        if (window.main?.chili?.submit) {
             window.main.chili.submit();
         }
     });
