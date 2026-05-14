@@ -50,6 +50,7 @@ export const FORM_CONFIG = {
   ],
 
   noBackButtonSteps: [
+    "1",
     "loading",
     "email",
   ],
