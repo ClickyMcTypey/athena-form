@@ -6,6 +6,7 @@ export function bindEvents({
     validation,
     animations,
     branching,
+    attribution,
 }) {
     function getStepNameFromElement(element) {
         return $(element).closest("[step]").attr("step");
@@ -24,12 +25,25 @@ export function bindEvents({
     }
 
     function fireStepAttribution() {
-        if (!window.attribution) return;
-
         const currentStep = steps.getCurrentStep();
-        const data = window.attribution.retrieve(currentStep);
 
-        window.attribution.fire(
+        const attributionService =
+            attribution || window.AthenaForm?.attribution || window.attribution;
+
+        if (!attributionService?.retrieve || !attributionService?.fire) {
+            console.warn("Attribution service not available");
+            return;
+        }
+
+        const data = attributionService.retrieve(currentStep);
+
+        console.log("Firing attribution", {
+            step: currentStep,
+            answers: data.answers,
+            fields: data.fields,
+        });
+
+        attributionService.fire(
             currentStep,
             data.answers,
             data.fields
