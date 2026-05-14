@@ -12,6 +12,14 @@ export function createStepsController({
     return config.noBackButtonSteps?.includes(String(stepName));
   }
 
+  function updateBackButtonForStep(stepName) {
+    if (shouldHideBackButton(stepName)) {
+      animations.toggleBackButton("hide");
+    } else {
+      animations.toggleBackButton("show");
+    }
+  }
+
   function getVisibleStepElements() {
     return Object.values($("[step]").not("[skip]"));
   }
@@ -130,6 +138,7 @@ export function createStepsController({
     if (!currentStepElement || !destinationStepElement) return;
 
     const targetStepName = $(destinationStepElement).attr("step");
+    updateBackButtonForStep(targetStepName);
     const steps = getVisibleStepElements();
 
     const currentStepIndex = steps.indexOf(currentStepElement);
