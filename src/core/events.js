@@ -224,14 +224,11 @@ export function bindEvents({
         }
     });
 
-    $(document).on("click.athenaForm", "[cmd='back']", function () {
+    $(document).on("click.athenaForm", "[cmd='back']", function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
         if (state.backLocked) return;
-
-        const stepIndexes = steps.getSteps();
-
-        if (stepIndexes[0] <= 1) {
-            animations.toggleBackButton("hide");
-        }
 
         const previousStep = steps.getPreviousStep();
 
