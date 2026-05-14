@@ -106,6 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 validation,
                 animations,
                 branching,
+                attribution,
             });
 
             startSystemLoops();
@@ -161,21 +162,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Compatibility shell
 
-    // window.attribution = {
-    //     checkGA4: attribution.checkGA4,
-    //     retrieve: attribution.retrieve,
-    //     fire: attribution.fire,
-    //     bingEC: attribution.bingEC,
-    //     vowelCheck: attribution.vowelCheck,
+    window.attribution = {
+        checkGA4: attribution.checkGA4,
+        retrieve: attribution.retrieve,
+        fire: attribution.fire,
+        bingEC: attribution.bingEC,
+        vowelCheck: attribution.vowelCheck,
 
-    //     fireRR() {
-    //         if (window.AthenaForm?.referralRock?.fireFromCurrentForm) {
-    //             return window.AthenaForm.referralRock.fireFromCurrentForm();
-    //         }
+        fireRR() {
+            if (window.AthenaForm?.referralRock?.fireFromCurrentForm) {
+                return window.AthenaForm.referralRock.fireFromCurrentForm();
+            }
 
-    //         return false;
-    //     },
-    // };
+            return false;
+        },
+    };
 
     //RR Old Code Bridge
     if (FORM_CONFIG.referralRock?.exposeLegacyGlobal) {
