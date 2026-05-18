@@ -53,6 +53,11 @@ export const FORM_CONFIG = {
     "1",
     "loading",
     "email",
+    "loading_chili",
+    "calendar",
+    "success",
+    "error",
+    "closed",
   ],
 
   redirectUrls: {
