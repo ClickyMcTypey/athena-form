@@ -85,7 +85,7 @@ export const FORM_CONFIG = {
   },
   referralRock: {
     enabled: true,
-    debug: true,
+    debug: false,
 
     paramName: "REFERRALCODE",
     cookieName: "REFERRALCODE",
