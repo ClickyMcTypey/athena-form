@@ -103,4 +103,45 @@ export const FORM_CONFIG = {
 
     exposeLegacyGlobal: true,
   },
+
+  scoring: {
+    enabled: true,
+
+    outputFields: {
+      score: "leadscoring_score",
+      tier: "leadscoring_tier",
+      breakdown: "lead_score_breakdown",
+    },
+
+    tiers: [
+      {
+        name: "tier_1",
+        minScore: 40,
+      },
+      {
+        name: "tier_2",
+        minScore: 0,
+      },
+    ],
+
+    rules: [
+      {
+        id: "has_ea",
+        label: "Already has an EA",
+        source: "field",
+        field: "your_question_1_field_name",
+        values: ["has_ea"],
+        points: 15,
+      },
+
+      {
+        id: "utm_medium_referral",
+        label: "UTM medium is referral",
+        source: "utm",
+        field: "utm_medium",
+        values: ["referral"],
+        points: 25,
+      },
+    ],
+  },
 };
