@@ -187,6 +187,17 @@ export const FORM_CONFIG = {
       },
 
       {
+        id: "hdyhau_primary",
+        source: "field",
+        field: "hdyhau_primary",
+        maxPoints: 25,
+
+        options: {
+          "Referral": 25,
+        },
+      },
+
+      {
         id: "utm_medium_referral",
         source: "utm",
         field: "utm_medium",
