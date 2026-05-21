@@ -110,37 +110,57 @@ export const FORM_CONFIG = {
     outputFields: {
       score: "leadscoring_score",
       tier: "leadscoring_tier",
-      breakdown: "lead_score_breakdown",
     },
 
     tiers: [
       {
         name: "tier_1",
-        minScore: 40,
+        minScore: 13,
       },
       {
         name: "tier_2",
+        minScore: 5,
+      },
+      {
+        name: "tier_3",
         minScore: 0,
       },
     ],
 
-    rules: [
+    questions: [
       {
-        id: "has_ea",
-        label: "Already has an EA",
+        id: "hbform_q1_worked_with_an_assistant",
         source: "field",
-        field: "your_question_1_field_name",
-        values: ["has_ea"],
-        points: 15,
+        field: "hbform_q1_worked_with_an_assistant",
+        maxPoints: 6,
+
+        options: {
+          "yes_i_have_one_now": 6,
+          "yes_but_not_currently": 6,
+          "no_never": 0,
+        },
       },
 
       {
         id: "utm_medium_referral",
-        label: "UTM medium is referral",
         source: "utm",
         field: "utm_medium",
-        values: ["referral"],
-        points: 25,
+        maxPoints: 25,
+
+        options: {
+          "clientreferral": 25,
+        },
+      },
+
+      {
+        id: "utm_medium_affiliate",
+        source: "utm",
+        field: "utm_medium",
+        maxPoints: 5,
+
+        options: {
+          "affiliate": 5,
+        },
       },
     ],
   },
