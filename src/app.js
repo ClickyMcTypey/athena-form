@@ -88,6 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
         animations,
         hubspot,
         attribution,
+        scoring,
     });
 
     const scoring = createScoringController({
