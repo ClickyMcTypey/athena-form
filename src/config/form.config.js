@@ -137,7 +137,40 @@ export const FORM_CONFIG = {
         options: {
           "yes_i_have_one_now": 6,
           "yes_but_not_currently": 6,
-          "no_never": 0,
+        },
+      },
+
+      {
+        id: "hbform_q5_day_to_day_tasks",
+        source: "field",
+        field: "hbform_q5_day_to_day_tasks",
+        maxPoints: 6,
+
+        options: {
+          "calendar__scheduling": 6,
+          "email_inbox_management": 6,
+        },
+      },
+
+      {
+        id: "hbform_q7_personal_logistics",
+        source: "field",
+        field: "hbform_q7_personal_logistics",
+        maxPoints: 6,
+
+        options: {
+          "travel_logistics_for_personal_trips": 6,
+        },
+      },
+
+      {
+        id: "hbform_q17_timeline",
+        source: "field",
+        field: "hbform_q17_timeline",
+        maxPoints: 6,
+
+        options: {
+          "asap_this_is_a_priority": 6,
         },
       },
 
