@@ -7,6 +7,7 @@ export function createSubmissionController({
   animations,
   hubspot,
   attribution,
+  scoring,
 }) {
   function hasHoneypotValue() {
     const value = $("[honey]").val();
@@ -73,6 +74,10 @@ export function createSubmissionController({
       animations.toggleBackButton("hide");
 
       steps.switchToStep("loading_chili");
+
+      if (scoring?.calculateAndWrite) {
+        scoring.calculateAndWrite();
+      }
 
       const payload = hubspot.buildSubmissionPayload();
       await hubspot.submitForm(payload);
