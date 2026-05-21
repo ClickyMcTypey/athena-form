@@ -141,6 +141,18 @@ export const FORM_CONFIG = {
       },
 
       {
+        id: "hbform_q2_current_workload",
+        source: "field",
+        field: "hbform_q2_current_workload",
+        maxPoints: 6,
+
+        options: {
+          "overloaded": 6,
+          "constantly_firefighting": 6,
+        },
+      },
+
+      {
         id: "hbform_q5_day_to_day_tasks",
         source: "field",
         field: "hbform_q5_day_to_day_tasks",
