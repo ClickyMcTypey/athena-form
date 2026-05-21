@@ -14,81 +14,90 @@ export function createScoringController({
     return String(value || "").trim().toLowerCase();
   }
 
-  function getFieldValue(fieldName) {
+  function getFieldValues(fieldName) {
+    const values = [];
+
     const $checked = $(`[name="${fieldName}"]:checked`);
 
     if ($checked.length) {
-      return $checked.val();
+      $checked.each(function () {
+        values.push($(this).val());
+      });
+
+      return values;
     }
 
     const $field = $(`[name="${fieldName}"]`).first();
 
-    if ($field.length) {
-      return $field.val();
-    }
+    if (!$field.length) return [];
 
-    return null;
-  }
+    const value = $field.val();
 
-  function getUtmValue(fieldName) {
-    if (state.utmParams?.[fieldName]) {
-      return state.utmParams[fieldName];
-    }
+    if (!value) return [];
 
-    const $field = $(`[name="${fieldName}"]`).first();
-
-    if ($field.length) {
-      return $field.val();
-    }
-
-    return null;
-  }
-
-  function valueMatches(actualValue, expectedValues = []) {
-    if (!actualValue) return false;
-
-    const actualParts = String(actualValue)
+    return String(value)
       .split(";")
-      .map(normalize)
+      .map((item) => item.trim())
       .filter(Boolean);
+  }
 
-    const expectedParts = expectedValues
-      .map(normalize)
-      .filter(Boolean);
+  function getUtmValues(fieldName) {
+    const value =
+      state.utmParams?.[fieldName] ||
+      $(`[name="${fieldName}"]`).first().val();
 
-    return expectedParts.some((expected) => {
-      return actualParts.includes(expected);
+    if (!value) return [];
+
+    return [value];
+  }
+
+  function getQuestionValues(question) {
+    if (question.source === "field") {
+      return getFieldValues(question.field);
+    }
+
+    if (question.source === "utm") {
+      return getUtmValues(question.field);
+    }
+
+    return [];
+  }
+
+  function getOptionPoints(question, value) {
+    const options = question.options || {};
+    const normalizedValue = normalize(value);
+
+    const matchedKey = Object.keys(options).find((key) => {
+      return normalize(key) === normalizedValue;
     });
+
+    if (!matchedKey) return 0;
+
+    return Number(options[matchedKey] || 0);
   }
 
-  function getRuleValue(rule) {
-    if (rule.source === "field") {
-      return getFieldValue(rule.field);
-    }
+  function evaluateQuestion(question) {
+    const values = getQuestionValues(question);
 
-    if (rule.source === "utm") {
-      return getUtmValue(rule.field);
-    }
+    const rawPoints = values.reduce((total, value) => {
+      return total + getOptionPoints(question, value);
+    }, 0);
 
-    return null;
-  }
+    const maxPoints =
+      question.maxPoints === undefined || question.maxPoints === null
+        ? rawPoints
+        : Number(question.maxPoints);
 
-  function evaluateRule(rule) {
-    const actualValue = getRuleValue(rule);
-
-    const matched = valueMatches(
-      actualValue,
-      rule.values || []
-    );
+    const points = Math.min(rawPoints, maxPoints);
 
     return {
-      id: rule.id,
-      label: rule.label || rule.id,
-      field: rule.field,
-      source: rule.source,
-      actualValue,
-      points: matched ? Number(rule.points || 0) : 0,
-      matched,
+      id: question.id,
+      field: question.field,
+      source: question.source,
+      values,
+      rawPoints,
+      maxPoints,
+      points,
     };
   }
 
@@ -135,7 +144,6 @@ export function createScoringController({
 
     const $scoreField = ensureHiddenField(fields.score);
     const $tierField = ensureHiddenField(fields.tier);
-    const $breakdownField = ensureHiddenField(fields.breakdown);
 
     if ($scoreField) {
       $scoreField.val(String(result.score));
@@ -144,10 +152,6 @@ export function createScoringController({
     if ($tierField) {
       $tierField.val(result.tier);
     }
-
-    if ($breakdownField) {
-      $breakdownField.val(JSON.stringify(result.matchedRules));
-    }
   }
 
   function calculate() {
@@ -155,17 +159,14 @@ export function createScoringController({
       return {
         score: 0,
         tier: "",
-        matchedRules: [],
-        allRules: [],
+        questions: [],
       };
     }
 
-    const allRules = (scoringConfig.rules || []).map(evaluateRule);
+    const questions = (scoringConfig.questions || []).map(evaluateQuestion);
 
-    const matchedRules = allRules.filter((rule) => rule.matched);
-
-    const score = matchedRules.reduce((total, rule) => {
-      return total + rule.points;
+    const score = questions.reduce((total, question) => {
+      return total + question.points;
     }, 0);
 
     const tier = getTier(score);
@@ -173,8 +174,7 @@ export function createScoringController({
     return {
       score,
       tier,
-      matchedRules,
-      allRules,
+      questions,
     };
   }
 
