@@ -18,6 +18,7 @@ import { createReferralRockService } from "./integrations/referralrock.service.j
 import { createSubmissionController } from "./features/submission.controller.js";
 import { createChiliService } from "./integrations/chili.service.js";
 import { createBranchController } from "./features/branch.controller.js";
+import { createScoringController } from "./features/scoring.controller.js";
 
 
 
@@ -89,6 +90,11 @@ document.addEventListener("DOMContentLoaded", () => {
         attribution,
     });
 
+    const scoring = createScoringController({
+        state,
+        config: FORM_CONFIG,
+    });
+
     async function start() {
         try {
 
@@ -120,10 +126,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             prefill.init();
 
-            if (referralRock?.captureReferralCode) {
-                referralRock.captureReferralCode();
+            if (scoring?.calculateAndWrite) {
+                scoring.calculateAndWrite();
             }
 
+            referralRock.captureReferralCode();
             branching.init();
 
             animations.fadeInForm();
@@ -157,6 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
         submission,
         chili,
         branching,
+        scoring,
         start,
     };
 
