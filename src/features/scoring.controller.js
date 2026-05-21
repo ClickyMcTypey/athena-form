@@ -15,23 +15,34 @@ export function createScoringController({
   }
 
   function getFieldValues(fieldName) {
-    const values = [];
+    const $fields = $(`[name="${fieldName}"]`);
 
-    const $checked = $(`[name="${fieldName}"]:checked`);
+    if (!$fields.length) return [];
 
-    if ($checked.length) {
-      $checked.each(function () {
+    const firstType = $fields.first().attr("type");
+
+    // Radio: only score checked value
+    if (firstType === "radio") {
+      const $checked = $fields.filter(":checked");
+
+      if (!$checked.length) return [];
+
+      return [$checked.val()];
+    }
+
+    // Checkbox: only score checked values
+    if (firstType === "checkbox") {
+      const values = [];
+
+      $fields.filter(":checked").each(function () {
         values.push($(this).val());
       });
 
       return values;
     }
 
-    const $field = $(`[name="${fieldName}"]`).first();
-
-    if (!$field.length) return [];
-
-    const value = $field.val();
+    // Hidden checkbox aggregator / text / select
+    const value = $fields.first().val();
 
     if (!value) return [];
 
