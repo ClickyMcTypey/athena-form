@@ -81,6 +81,11 @@ document.addEventListener("DOMContentLoaded", () => {
         referralRock,
     });
 
+    const scoring = createScoringController({
+        state,
+        config: FORM_CONFIG,
+    });
+
     const submission = createSubmissionController({
         state,
         config: FORM_CONFIG,
@@ -89,11 +94,6 @@ document.addEventListener("DOMContentLoaded", () => {
         hubspot,
         attribution,
         scoring,
-    });
-
-    const scoring = createScoringController({
-        state,
-        config: FORM_CONFIG,
     });
 
     async function start() {
