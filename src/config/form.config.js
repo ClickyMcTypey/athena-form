@@ -127,6 +127,27 @@ export const FORM_CONFIG = {
       },
     ],
 
+    forceTierRules: [
+      {
+        id: "blocked_email_domain",
+        type: "email_domain",
+        field: "email",
+        tier: "tier_3",
+        domains: [
+          "redwirespace.com",
+          "maxspace.com",
+          "mytimein.io",
+          "thedanielramsey.com",
+          "ascendbuild.co",
+          "bruntwork.co",
+          "getmagic.com",
+          "wingassistant.com",
+          "myoutdesk.com",
+          "pearltalent.com",
+        ],
+      },
+    ],
+
     questions: [
       {
         id: "hbform_q1_worked_with_an_assistant",
