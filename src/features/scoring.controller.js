@@ -87,6 +87,50 @@ export function createScoringController({
     return Number(options[matchedKey] || 0);
   }
 
+  function getEmailDomain(email) {
+    if (!email || !String(email).includes("@")) return "";
+
+    return String(email)
+      .split("@")
+      .pop()
+      .trim()
+      .toLowerCase();
+  }
+
+  function domainMatches(emailDomain, blockedDomain) {
+    const cleanEmailDomain = String(emailDomain || "").toLowerCase();
+    const cleanBlockedDomain = String(blockedDomain || "").toLowerCase();
+
+    return (
+      cleanEmailDomain === cleanBlockedDomain ||
+      cleanEmailDomain.endsWith(`.${cleanBlockedDomain}`)
+    );
+  }
+
+  function getForcedTier() {
+    const rules = scoringConfig.forceTierRules || [];
+
+    for (const rule of rules) {
+      if (rule.type !== "email_domain") continue;
+
+      const email = $(`[name="${rule.field}"]`).val();
+      const emailDomain = getEmailDomain(email);
+
+      const isMatch = (rule.domains || []).some((domain) => {
+        return domainMatches(emailDomain, domain);
+      });
+
+      if (isMatch) {
+        return {
+          tier: rule.tier,
+          ruleId: rule.id,
+        };
+      }
+    }
+
+    return null;
+  }
+
   function evaluateQuestion(question) {
     const values = getQuestionValues(question);
 
@@ -180,12 +224,17 @@ export function createScoringController({
       return total + question.points;
     }, 0);
 
-    const tier = getTier(score);
+    const forcedTier = getForcedTier();
+
+    const tier = forcedTier
+      ? forcedTier.tier
+      : getTier(score);
 
     return {
       score,
       tier,
       questions,
+      forcedTier,
     };
   }
 
