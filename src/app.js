@@ -96,6 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
         scoring,
     });
     //sanity log 2
+    console.log("e");
     async function start() {
         try {
 
