@@ -7,6 +7,7 @@ export function createSubmissionController({
   animations,
   hubspot,
   attribution,
+  scoring,
 }) {
   function hasHoneypotValue() {
     const value = $("[honey]").val();
@@ -39,6 +40,15 @@ export function createSubmissionController({
     $submitBtn.data("is-submitting", false);
     $submitBtn.prop("disabled", false);
     $submitBtn.removeClass("disabled");
+  }
+
+  function showTier3Message() {
+    $('[c_element="error_title"]').text("We'll be in touch!");
+    $('[c_element="error_body"]').text("Someone from our team will call you shortly.");
+  }
+
+  function isTier3(scoringResult) {
+    return scoringResult?.tier === "tier_3";
   }
 
   async function submit() {
@@ -74,8 +84,27 @@ export function createSubmissionController({
 
       steps.switchToStep("loading_chili");
 
+      let scoringResult = null;
+
+      if (scoring?.calculateAndWrite) {
+        scoringResult = scoring.calculateAndWrite();
+      }
+
       const payload = hubspot.buildSubmissionPayload();
       await hubspot.submitForm(payload);
+
+      // If tier 3, HubSpot already received the submission.
+      // Now stop the ChiliPiper flow and show the custom message.
+      if (isTier3(scoringResult)) {
+        showTier3Message();
+
+        state.isSubmitting = false;
+
+        animations.toggleBackButton("hide");
+        steps.switchToStep("error");
+
+        return;
+      }
 
       attribution.fire("calendar");
 

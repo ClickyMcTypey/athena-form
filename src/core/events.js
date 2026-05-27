@@ -37,11 +37,12 @@ export function bindEvents({
 
         const data = attributionService.retrieve(currentStep);
 
-        console.log("Firing attribution", {
-            step: currentStep,
-            answers: data.answers,
-            fields: data.fields,
-        });
+        //log hide
+        // console.log("Firing attribution", {
+        //     step: currentStep,
+        //     answers: data.answers,
+        //     fields: data.fields,
+        // });
 
         attributionService.fire(
             currentStep,

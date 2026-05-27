@@ -60,7 +60,8 @@ export function createBranchController({
 
     applyBranchVisibility();
 
-    console.log("Current branch:", normalizedBranch);
+    //hidden log
+    //console.log("Current branch:", normalizedBranch);
 
     return normalizedBranch;
   }
