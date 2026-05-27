@@ -20,7 +20,7 @@ export function createScoringController({
     if (!$fields.length) return [];
 
     const firstType = $fields.first().attr("type");
-
+    //sanity log entry
     // Radio: only score checked value
     if (firstType === "radio") {
       const $checked = $fields.filter(":checked");
