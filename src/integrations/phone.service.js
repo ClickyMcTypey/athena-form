@@ -52,13 +52,25 @@ export function createPhoneService({ state }) {
   }
 
   function syncHiddenPhoneField() {
-    const value = getE164Number();
+    const instance = state.phoneInstance || window.iti;
 
-    if (value) {
-      $('[name="phone"]').val(value);
+    if (!instance || !window.intlTelInput?.utils) {
+      $('[name="phone"]').val("");
+      return "";
     }
 
-    return value;
+    const isValid = instance.isValidNumber();
+    const value = instance.getNumber(
+      window.intlTelInput.utils.numberFormat.E164
+    );
+
+    if (isValid) {
+      $('[name="phone"]').val(value);
+      return value;
+    }
+
+    $('[name="phone"]').val("");
+    return "";
   }
 
   function isValid() {

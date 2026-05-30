@@ -102,7 +102,11 @@ export function createValidationService({
   function validateCheckboxField($step, name) {
     const $hidden = findFieldByName($step, name).filter(":hidden");
 
-    if (!$hidden.length) return null;
+    // Only treat hidden fields as checkbox aggregators
+    // if there are actual checkbox inputs using for="fieldName"
+    const $checkboxes = $step.find(`input[type="checkbox"][for="${name}"]`);
+
+    if (!$hidden.length || !$checkboxes.length) return null;
 
     let isValid = false;
 
@@ -112,7 +116,10 @@ export function createValidationService({
 
       if (!currentValue) return;
 
-      const selectedValues = String(currentValue).split(";");
+      const selectedValues = String(currentValue)
+        .split(";")
+        .map((item) => item.trim())
+        .filter(Boolean);
 
       if (selectedValues.length >= minimum) {
         isValid = true;
@@ -221,12 +228,17 @@ export function createValidationService({
         return;
       }
 
-      const phoneIsValid =
-        window.AthenaForm?.phone?.isValid?.() ||
-        state.phoneInstance?.isValidNumber?.() ||
-        window.iti?.isValidNumber?.();
+      const phoneInstance = state.phoneInstance || window.iti;
 
-      if (phoneIsValid) {
+      const rawValue = String($field.val() || "").trim();
+      const digitsOnly = rawValue.replace(/\D/g, "");
+
+      const pluginValid = Boolean(phoneInstance?.isValidNumber?.());
+
+      // Extra guard: prevent short fake values like 123
+      const hasEnoughDigits = digitsOnly.length >= 7;
+
+      if (pluginValid && hasEnoughDigits) {
         $field.closest(".signup-input").removeClass("invalid");
       } else {
         $field.closest(".signup-input").addClass("invalid");
