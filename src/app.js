@@ -19,6 +19,7 @@ import { createSubmissionController } from "./features/submission.controller.js"
 import { createChiliService } from "./integrations/chili.service.js";
 import { createBranchController } from "./features/branch.controller.js";
 import { createScoringController } from "./features/scoring.controller.js";
+import { createErrorLoggerService } from "./integrations/error-logger.service.js";
 
 
 
@@ -27,6 +28,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const animations = createAnimations({
         config: FORM_CONFIG,
+    });
+
+    const errorLogger = createErrorLoggerService({
+        state,
     });
 
     const steps = createStepsController({
@@ -94,8 +99,9 @@ document.addEventListener("DOMContentLoaded", () => {
         hubspot,
         attribution,
         scoring,
+        errorLogger,
     });
-    
+
     async function start() {
         try {
 
@@ -166,6 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
         chili,
         branching,
         scoring,
+        errorLogger,
         start,
     };
 
