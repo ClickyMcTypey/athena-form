@@ -31,9 +31,7 @@ export function createSubmissionController({
 
   function showErrorStep(errorData = {}) {
     errorLogger?.logError?.(errorData);
-
     attribution?.fire?.("error");
-
     steps.switchToStep("error");
   }
 
@@ -78,9 +76,9 @@ export function createSubmissionController({
           },
         });
 
+        state.isSubmitting = false;
         return;
       }
-
       removeHoneypotMarkup();
 
       if (!attribution.vowelCheck()) {
@@ -89,6 +87,7 @@ export function createSubmissionController({
           message: "Name quality / vowel check failed",
         });
 
+        state.isSubmitting = false;
         return;
       }
 
