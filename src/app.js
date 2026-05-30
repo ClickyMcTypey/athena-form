@@ -140,6 +140,8 @@ document.addEventListener("DOMContentLoaded", () => {
             referralRock.captureReferralCode();
             branching.init();
 
+            errorLogger.cacheErrorForm();
+
             animations.fadeInForm();
 
             $("[step='1']")
