@@ -48,6 +48,14 @@ export function createValidationService({
     getValidationWrapper($element).removeClass("invalid");
   }
 
+  function isNameField(name) {
+    return ["firstname", "lastname"].includes(String(name));
+  }
+
+  function hasOnlyNumbers(value) {
+    return /^[0-9\s]+$/.test(String(value || "").trim());
+  }
+
   function shouldValidateField($element) {
     // In your form, solo="" means untouched / do not show validation yet.
     // Once solo is removed, validation should run.
@@ -267,6 +275,9 @@ export function createValidationService({
       const value = String($field.val() || "").trim();
 
       if (!value) {
+        markInvalid($field);
+        isValid = false;
+      } else if (isNameField(name) && hasOnlyNumbers(value)) {
         markInvalid($field);
         isValid = false;
       } else {
