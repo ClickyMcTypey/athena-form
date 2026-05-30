@@ -140,7 +140,10 @@ document.addEventListener("DOMContentLoaded", () => {
             referralRock.captureReferralCode();
             branching.init();
 
-            errorLogger.cacheErrorForm();
+            window.Webflow ||= [];
+            window.Webflow.push(() => {
+                errorLogger.cacheErrorForm();
+            });
 
             animations.fadeInForm();
 
