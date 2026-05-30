@@ -41,6 +41,27 @@ export function createSubmissionController({
     return config.bannedCountries.includes(countryCode);
   }
 
+  function normalizeSubmissionError(error) {
+    const type = error?.type || "unknown_submission_exception";
+
+    const extra = {
+      status: error?.status || "",
+      statusText: error?.statusText || "",
+      hubspot_response: error?.data ? JSON.stringify(error.data) : "",
+    };
+
+    if (error?.originalError) {
+      extra.original_error_message = error.originalError.message || "";
+    }
+
+    return {
+      type,
+      message: error?.message || "Unknown submission error",
+      stack: error?.stack || "",
+      extra,
+    };
+  }
+
   function unlockSubmitButton() {
     const $submitBtn = $("[cmd='proceed'][last]");
 
@@ -105,8 +126,20 @@ export function createSubmissionController({
 
       let scoringResult = null;
 
-      if (scoring?.calculateAndWrite) {
-        scoringResult = scoring.calculateAndWrite();
+      try {
+        if (scoring?.calculateAndWrite) {
+          scoringResult = scoring.calculateAndWrite();
+        }
+      } catch (error) {
+        state.isSubmitting = false;
+
+        showErrorStep({
+          type: "scoring_calculation_failed",
+          message: error?.message || "Lead scoring failed",
+          stack: error?.stack || "",
+        });
+
+        return;
       }
 
       const payload = hubspot.buildSubmissionPayload();
@@ -143,11 +176,7 @@ export function createSubmissionController({
       state.isSubmitting = false;
       unlockSubmitButton();
 
-      showErrorStep({
-        type: "submission_exception",
-        message: error?.message || "Unknown submission error",
-        stack: error?.stack || "",
-      });
+      showErrorStep(normalizeSubmissionError(error));
     }
   }
 

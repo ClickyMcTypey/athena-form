@@ -133,7 +133,9 @@ export function createHubspotService({
 
   function buildSubmissionPayload(form = document.querySelector("#athn_form")) {
     if (!form) {
-      throw new Error("Form #athn_form not found");
+      const error = new Error("Form #athn_form not found");
+      error.type = "missing_athn_form";
+      throw error;
     }
 
     return {
@@ -157,31 +159,51 @@ export function createHubspotService({
   }
 
   async function submitForm(payload) {
-    const response = await fetch(getSubmitUrl(), {
-      method: "POST",
-      mode: "cors",
-      cache: "no-cache",
-      credentials: "same-origin",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      redirect: "follow",
-      referrerPolicy: "no-referrer",
-      body: JSON.stringify(payload),
-    });
+    let response;
+
+    try {
+      response = await fetch(getSubmitUrl(), {
+        method: "POST",
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        redirect: "follow",
+        referrerPolicy: "no-referrer",
+        body: JSON.stringify(payload),
+      });
+    } catch (networkError) {
+      const error = new Error("Network error while submitting to HubSpot");
+      error.type = "hubspot_network_error";
+      error.originalError = networkError;
+      throw error;
+    }
 
     let data = null;
 
     try {
       data = await response.json();
-    } catch (error) {
+    } catch {
       data = null;
     }
 
     if (!response.ok) {
-      const error = new Error("HubSpot submission failed");
-      error.response = response;
+      const error = new Error("HubSpot API rejected the submission");
+
+      if (response.status === 429) {
+        error.type = "hubspot_rate_limited";
+      } else if (response.status >= 500) {
+        error.type = "hubspot_server_error";
+      } else {
+        error.type = "hubspot_api_error";
+      }
+
+      error.status = response.status;
+      error.statusText = response.statusText;
       error.data = data;
+
       throw error;
     }
 
