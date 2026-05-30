@@ -8,6 +8,7 @@ export function createSubmissionController({
   hubspot,
   attribution,
   scoring,
+  errorLogger,
 }) {
   function hasHoneypotValue() {
     const value = $("[honey]").val();
@@ -26,6 +27,14 @@ export function createSubmissionController({
     }
 
     return phoneInstance.getSelectedCountryData().iso2;
+  }
+
+  function showErrorStep(errorData = {}) {
+    errorLogger?.logError?.(errorData);
+
+    attribution?.fire?.("error");
+
+    steps.switchToStep("error");
   }
 
   function isBannedCountry() {
@@ -61,14 +70,25 @@ export function createSubmissionController({
 
     try {
       if (hasHoneypotValue()) {
-        steps.switchToStep("error");
+        showErrorStep({
+          type: "honeypot_triggered",
+          message: "Honeypot field extra_contact had a value",
+          extra: {
+            extra_contact: $("[name='extra_contact']").val() || "",
+          },
+        });
+
         return;
       }
 
       removeHoneypotMarkup();
 
       if (!attribution.vowelCheck()) {
-        steps.switchToStep("error");
+        showErrorStep({
+          type: "name_quality_failed",
+          message: "Name quality / vowel check failed",
+        });
+
         return;
       }
 
@@ -124,7 +144,11 @@ export function createSubmissionController({
       state.isSubmitting = false;
       unlockSubmitButton();
 
-      steps.switchToStep("error");
+      showErrorStep({
+        type: "submission_exception",
+        message: error?.message || "Unknown submission error",
+        stack: error?.stack || "",
+      });
     }
   }
 
