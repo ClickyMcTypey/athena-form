@@ -207,7 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     }
 
-    console.log("Athena form app initialized");
+    //console.log("Athena form app initialized");
 
     start();
 });

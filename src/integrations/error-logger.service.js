@@ -13,7 +13,7 @@ export function createErrorLoggerService({ state }) {
         const $wrapper = $container.find(WRAPPER_SELECTOR).first();
 
         if (!$wrapper.length) {
-            console.warn("Error log wrapper not found");
+            //console.warn("Error log wrapper not found");
             return false;
         }
 
@@ -27,12 +27,12 @@ export function createErrorLoggerService({ state }) {
         const $container = $(CONTAINER_SELECTOR);
 
         if (!$container.length) {
-            console.warn("Error log container #e239 not found");
+            //console.warn("Error log container #e239 not found");
             return null;
         }
 
         if (!$storedWrapper || !$storedWrapper.length) {
-            console.warn("Stored error form not available");
+            //console.warn("Stored error form not available");
             return null;
         }
 
@@ -162,7 +162,7 @@ export function createErrorLoggerService({ state }) {
             const $submit = $form.find("[error-log-submit], [type='submit']").first();
 
             if (!$submit.length) {
-                console.warn("Error log submit button not found");
+                //console.warn("Error log submit button not found");
                 return false;
             }
 
@@ -171,7 +171,7 @@ export function createErrorLoggerService({ state }) {
 
             return true;
         } catch (error) {
-            console.warn("Error log form submit failed", error);
+            //console.warn("Error log form submit failed", error);
             return false;
         }
     }
@@ -181,7 +181,7 @@ export function createErrorLoggerService({ state }) {
             const $form = restoreErrorForm();
 
             if (!$form || !$form.length) {
-                console.warn("Cannot log error: error form not restored");
+                //console.warn("Cannot log error: error form not restored");
                 return false;
             }
 
@@ -195,7 +195,7 @@ export function createErrorLoggerService({ state }) {
 
             return true;
         } catch (error) {
-            console.warn("Error logger failed", error);
+            //console.warn("Error logger failed", error);
             return false;
         }
     }
