@@ -43,6 +43,12 @@ export function createErrorLoggerService({ state }) {
         return $container.find(FORM_SELECTOR).first();
     }
 
+    function getSimpleBrowserInfo() {
+        return {
+            browser_user_agent: navigator.userAgent || "",
+        };
+    }
+
     function getTimezoneInfo() {
         return {
             timestamp_iso: new Date().toISOString(),
