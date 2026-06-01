@@ -84,6 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
         steps,
         attribution,
         referralRock,
+        errorLogger,
     });
 
     const scoring = createScoringController({
