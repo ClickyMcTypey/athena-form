@@ -6,6 +6,7 @@ export function createChiliService({
   steps,
   attribution,
   referralRock,
+  errorLogger,
 }) {
   const meetingDescription =
     "This is a no-commitment conversation with us. We’ll explain how Athena works, answer any questions, and discuss whether an Executive Assistant makes sense for you right now.";
