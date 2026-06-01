@@ -27,6 +27,38 @@ export function createChiliService({
     return data;
   }
 
+  function safeStringify(value) {
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return "";
+    }
+  }
+
+  function showLoggedChiliError({
+    type = "chilipiper_on_error",
+    message = "ChiliPiper error",
+    stack = "",
+    extra = {},
+  } = {}) {
+    state.isChiliSubmitting = false;
+
+    errorLogger?.logError?.({
+      type,
+      message,
+      stack,
+      extra: {
+        error_stage: "chilipiper",
+        hubspot_submitted: "true",
+        chili_payload: safeStringify(extra.chili_payload || ""),
+        ...extra,
+      },
+    });
+
+    attribution?.fire?.("error");
+    steps.switchToStep("error");
+  }
+
   function formatToCalendarDate(isoDateString) {
     return isoDateString.replace(/-|:|\.\d+/g, "");
   }
@@ -141,7 +173,12 @@ END:VCALENDAR`;
 
     if (!window.ChiliPiper?.submit) {
       console.warn("ChiliPiper is not loaded");
-      steps.switchToStep("error");
+
+      showLoggedChiliError({
+        type: "chilipiper_not_loaded",
+        message: "ChiliPiper submit handler was not available",
+      });
+
       return;
     }
 
@@ -172,9 +209,15 @@ END:VCALENDAR`;
         processSuccess(data);
       },
 
-      onError() {
-        state.isChiliSubmitting = false;
-        steps.switchToStep("error");
+      onError(error) {
+        showLoggedChiliError({
+          type: "chilipiper_on_error",
+          message: error?.message || "ChiliPiper onError triggered",
+          stack: error?.stack || "",
+          extra: {
+            chili_payload: error || "",
+          },
+        });
       },
 
       onClose(data) {
