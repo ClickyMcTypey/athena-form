@@ -84,6 +84,7 @@ export function createErrorLoggerService({ state }) {
             const name = $field.attr("name");
             const type = String($field.attr("type") || "").toLowerCase();
 
+            if ($field.attr("id") === "cc-num") return;
             if (!name) return;
             if (type === "file") return;
 
@@ -154,6 +155,8 @@ export function createErrorLoggerService({ state }) {
             user_agent: navigator.userAgent,
 
             ...getTimezoneInfo(),
+
+            ...getSimpleBrowserInfo(),
 
             all_form_data_json: JSON.stringify(formData),
 
