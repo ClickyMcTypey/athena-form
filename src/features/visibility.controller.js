@@ -70,9 +70,11 @@ export function createVisibilityController({
             const requiredFlags = parseFlags($el.attr(attr));
 
             if (matchesAnyFlag(requiredFlags)) {
+                $el.attr("data-athena-active", "true");
                 $el.removeAttr("hidden");
                 $el.show();
             } else {
+                $el.removeAttr("data-athena-active");
                 $el.attr("hidden", "");
                 $el.hide();
             }
@@ -93,8 +95,10 @@ export function createVisibilityController({
             const requiredFlags = parseFlags($step.attr(attr));
 
             if (matchesAnyFlag(requiredFlags)) {
+                $step.attr("data-athena-active", "true");
                 $step.removeAttr("skip");
             } else {
+                $step.removeAttr("data-athena-active");
                 $step.attr("skip", "");
             }
         });
