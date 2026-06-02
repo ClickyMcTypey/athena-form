@@ -81,6 +81,23 @@ export function createVisibilityController({
         });
     }
 
+    function applyReferrerRules() {
+        const rules = visibilityConfig.referrerRules || [];
+        const referrer = document.referrer || "";
+
+        if (!referrer) return;
+
+        rules.forEach((rule) => {
+            if (!rule.referrerIncludes || !rule.flag) return;
+
+            if (referrer.includes(rule.referrerIncludes)) {
+                enable(rule.flag, {
+                    apply: false,
+                });
+            }
+        });
+    }
+
     function applySteps() {
         const selector =
             visibilityConfig.selectors?.steps ||
@@ -149,6 +166,7 @@ export function createVisibilityController({
         if (!isEnabled()) return;
 
         syncFromGlobal();
+        applyReferrerRules();
         apply();
     }
 
