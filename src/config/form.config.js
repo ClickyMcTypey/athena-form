@@ -248,6 +248,14 @@ export const FORM_CONFIG = {
 
     globalName: "__ATHENA_FLAGS__",
 
+    referrerRules: [
+      {
+        id: "founders_at_scale",
+        referrerIncludes: "foundersatscale.com",
+        flag: "founders-at-scale",
+      },
+    ],
+
     selectors: {
       elements: "[data-athena-show]",
       steps: "[data-athena-step-flag]",
