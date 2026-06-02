@@ -22,4 +22,6 @@ export const state = {
   nextLocked: false,
   backLocked: false,
   currentBranch: null,
+
+  visibilityFlags: [],
 };

@@ -88,6 +88,7 @@ export const FORM_CONFIG = {
       },
     },
   },
+
   referralRock: {
     enabled: true,
     debug: false,
@@ -240,5 +241,21 @@ export const FORM_CONFIG = {
         },
       },
     ],
+  },
+
+  visibility: {
+    enabled: true,
+
+    globalName: "__ATHENA_FLAGS__",
+
+    selectors: {
+      elements: "[data-athena-show]",
+      steps: "[data-athena-step-flag]",
+    },
+
+    attributes: {
+      elements: "data-athena-show",
+      steps: "data-athena-step-flag",
+    },
   },
 };

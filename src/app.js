@@ -20,6 +20,7 @@ import { createChiliService } from "./integrations/chili.service.js";
 import { createBranchController } from "./features/branch.controller.js";
 import { createScoringController } from "./features/scoring.controller.js";
 import { createErrorLoggerService } from "./integrations/error-logger.service.js";
+import { createVisibilityController } from "./features/visibility.controller.js";
 
 
 
@@ -54,6 +55,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const phone = createPhoneService({
         state,
+    });
+
+    const visibility = createVisibilityController({
+        state,
+        config: FORM_CONFIG,
     });
 
     const fieldRenderer = createFieldRenderer();
@@ -140,6 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             referralRock.captureReferralCode();
             branching.init();
+            visibility.init();
 
             window.Webflow ||= [];
             window.Webflow.push(() => {
@@ -179,6 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
         branching,
         scoring,
         errorLogger,
+        visibility,
         start,
     };
 
