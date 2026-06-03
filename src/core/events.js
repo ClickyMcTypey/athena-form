@@ -16,6 +16,20 @@ export function bindEvents({
         return $(`[step="${stepName}"]`);
     }
 
+    function scrollToFormTop() {
+        if (window.lenis?.scrollTo) {
+            window.lenis.scrollTo(0, {
+                duration: 0.8,
+            });
+            return;
+        }
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
+    }
+
     function maybeShowBackButton() {
         const stepIndexes = steps.getSteps();
 
@@ -116,6 +130,7 @@ export function bindEvents({
             const nextStep = steps.getNextStep();
             if (nextStep) {
                 steps.switchToStep(nextStep);
+                scrollToFormTop();
             }
         }
     });
@@ -219,6 +234,7 @@ export function bindEvents({
 
             if (nextStep) {
                 steps.switchToStep(nextStep);
+                scrollToFormTop();
             }
 
             state.nextLocked = true;
