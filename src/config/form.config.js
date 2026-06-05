@@ -75,16 +75,9 @@ export const FORM_CONFIG = {
         map: {
           "yes_but_not_currently": "1",
           "yes_i_have_one_now": "1",
+          "no_never": "2",
         },
 
-        experimentOverrides: {
-          "no_never": {
-            globalName: "__MIDABRANCH_090526",
-            storageKey: "mida_branch_090526",
-            allowedBranches: ["1", "2"],
-            fallbackBranch: "1",
-          },
-        },
       },
     },
   },
