@@ -9,6 +9,15 @@ export function createAnimations({ config }) {
     }
   }
 
+  function getContinueMaskHeight($mask, $button) {
+    const buttonHeight = $button.outerHeight(true);
+
+    const paddingTop = parseFloat($mask.css("padding-top")) || 0;
+    const paddingBottom = parseFloat($mask.css("padding-bottom")) || 0;
+
+    return buttonHeight + paddingTop + paddingBottom;
+  }
+
   return {
     toggleBackButton(mode) {
       const $mask = $("[mask=nav_back]");
@@ -64,7 +73,7 @@ export function createAnimations({ config }) {
         $continueMask
           .animate(
             {
-              height: `${$continueButton.outerHeight(true)}px`,
+              height: `${getContinueMaskHeight($continueMask, $continueButton)}px`,
               opacity: 1,
             },
             animationTime
