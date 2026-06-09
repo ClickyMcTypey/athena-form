@@ -21,6 +21,7 @@ import { createBranchController } from "./features/branch.controller.js";
 import { createScoringController } from "./features/scoring.controller.js";
 import { createErrorLoggerService } from "./integrations/error-logger.service.js";
 import { createVisibilityController } from "./features/visibility.controller.js";
+import { createFormSchemaService } from "./features/form-schema.service.js";
 
 
 
@@ -98,6 +99,11 @@ document.addEventListener("DOMContentLoaded", () => {
         config: FORM_CONFIG,
     });
 
+    const formSchema = createFormSchemaService({
+        state,
+        config: FORM_CONFIG
+    });
+
     const submission = createSubmissionController({
         state,
         config: FORM_CONFIG,
@@ -107,6 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
         attribution,
         scoring,
         errorLogger,
+        formSchema,
     });
 
     async function start() {
@@ -187,6 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
         scoring,
         errorLogger,
         visibility,
+        formSchema,
         start,
     };
 
