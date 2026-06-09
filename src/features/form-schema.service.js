@@ -38,30 +38,15 @@ export function createFormSchemaService({ state, config }) {
     }
 
     function getStepLabel($step) {
-        const directLabel =
-            $step.attr("data-schema-label") ||
-            $step.attr("aria-label");
+        const stepName = String($step.attr("step") || "");
 
-        if (directLabel) return cleanText(directLabel);
+        const $heading = $step.find(".signup-b-quiz-heading").first();
 
-        const $label = $step
-            .find(
-                [
-                    "[data-schema-step-label]",
-                    "[c_element='question_title']",
-                    "[c-element='question_title']",
-                    "legend",
-                    "h1",
-                    "h2",
-                    "h3",
-                    "h4",
-                    "h5",
-                    "h6"
-                ].join(",")
-            )
-            .first();
+        const headingText = cleanText($heading.text());
 
-        return cleanText($label.text());
+        if (headingText) return headingText;
+
+        return stepName;
     }
 
     function getFieldLabel($step, internalName, $field) {
