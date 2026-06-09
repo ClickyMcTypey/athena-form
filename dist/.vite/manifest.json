@@ -1,10 +1,14 @@
 {
   "src/app.js": {
 <<<<<<< HEAD
+<<<<<<< HEAD
     "file": "assets/app.D1dUYolv.js",
 =======
     "file": "assets/app.CgwYM9G5.js",
 >>>>>>> f225a58 (npm build)
+=======
+    "file": "assets/app.DvzRcVXT.js",
+>>>>>>> 2b4b68c (npm build)
     "name": "app",
     "src": "src/app.js",
     "isEntry": true
