@@ -503,6 +503,23 @@ export function createFormSchemaService({ state, config }) {
         };
     }
 
+    function writeOutputField($form, fieldName, value) {
+        if (!fieldName) return;
+
+        let $field = $form
+            .find(`[name="${fieldName}"], #${fieldName}`)
+            .first();
+
+        if (!$field.length) {
+            $field = $(`<input type="hidden" name="${fieldName}" id="${fieldName}">`);
+            $form.append($field);
+        }
+
+        // Set both property and attribute so DevTools also shows it clearly
+        $field.val(value);
+        $field.attr("value", value);
+    }
+
     function writeSnapshot() {
         if (!isEnabled()) return null;
 
@@ -513,18 +530,15 @@ export function createFormSchemaService({ state, config }) {
             return null;
         }
 
-        const outputField = schemaConfig.outputField || "form_snapshot_json";
+        const outputJsonField = schemaConfig.outputJsonField || "leadformjson";
+        const outputVersionField = schemaConfig.outputVersionField || "leadformversion";
+
         const snapshot = buildSnapshot();
         const json = JSON.stringify(snapshot);
+        const version = schemaConfig.formVersion || "1";
 
-        let $output = $form.find(`[name="${outputField}"]`).first();
-
-        if (!$output.length) {
-            $output = $(`<textarea name="${outputField}" style="display:none;"></textarea>`);
-            $form.append($output);
-        }
-
-        $output.val(json);
+        writeOutputField($form, outputJsonField, json);
+        writeOutputField($form, outputVersionField, version);
 
         return snapshot;
     }
