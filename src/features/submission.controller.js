@@ -9,6 +9,7 @@ export function createSubmissionController({
   attribution,
   scoring,
   errorLogger,
+  formSchema
 }) {
   function hasHoneypotValue() {
     const value = $("[honey]").val();
@@ -140,6 +141,10 @@ export function createSubmissionController({
         });
 
         return;
+      }
+
+      if (formSchema?.writeSnapshot) {
+        formSchema.writeSnapshot();
       }
 
       const payload = hubspot.buildSubmissionPayload();
