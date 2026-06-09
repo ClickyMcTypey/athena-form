@@ -263,7 +263,8 @@ export const FORM_CONFIG = {
   formSchema: {
     enabled: true,
 
-    outputField: "form_snapshot_json",
+    outputJsonField: "leadformjson",
+    outputVersionField: "leadformversion",
 
     formVersion: "1",
     formEffectivityDate: "2026-06-09",
@@ -282,6 +283,8 @@ export const FORM_CONFIG = {
     ],
 
     excludedHiddenFields: [
+      "leadformversion",
+      "leadformjson",
       "form_version",
       "form_effectivity_date",
       "form_version_context",
