@@ -259,4 +259,37 @@ export const FORM_CONFIG = {
       steps: "data-athena-step-flag",
     },
   },
+
+  formSchema: {
+    enabled: true,
+
+    outputField: "form_snapshot_json",
+
+    formVersion: "1",
+    formEffectivityDate: "2026-06-09",
+    formVersionContext: "added form version schema",
+
+    formSelector: "#athn_form",
+    stepSelector: "[step]",
+
+    excludedSteps: [
+      "loading",
+      "loading_chili",
+      "calendar",
+      "success",
+      "error",
+      "closed"
+    ],
+
+    excludedHiddenFields: [
+      "form_version",
+      "form_effectivity_date",
+      "form_version_context",
+      "form_snapshot_json",
+      "form_schema_json",
+      "schema_version",
+      "cc-num",
+      "extra_contact"
+    ]
+  },
 };
