@@ -85,52 +85,6 @@ export function createFormSchemaService({ state, config }) {
         return addedElements;
     }
 
-    function getFieldLabel($step, internalName, $field) {
-        const schemaLabel = $field.attr("data-schema-label");
-
-        if (schemaLabel) return cleanText(schemaLabel);
-
-        const id = $field.attr("id");
-
-        if (id) {
-            const $labelById = $step.find(`label[for="${id}"]`).first();
-
-            if ($labelById.length) {
-                return cleanText($labelById.text());
-            }
-        }
-
-        const $fieldWrapper = $field.closest(
-            "[hsfield], [data-field], .hs-form-field, .form-field, .signup-field, .field"
-        );
-
-        const $wrapperLabel = $fieldWrapper
-            .find(
-                [
-                    "[data-schema-field-label]",
-                    "[field-label]",
-                    "[data-field-label]",
-                    "legend",
-                    "label"
-                ].join(",")
-            )
-            .first();
-
-        if ($wrapperLabel.length) {
-            return cleanText($wrapperLabel.text());
-        }
-
-        const $stepLabel = $step
-            .find(`[data-schema-field="${internalName}"]`)
-            .first();
-
-        if ($stepLabel.length) {
-            return cleanText($stepLabel.text());
-        }
-
-        return "";
-    }
-
     function isFieldRequired($fields) {
         if (!$fields || !$fields.length) return false;
 
@@ -184,7 +138,6 @@ export function createFormSchemaService({ state, config }) {
         return {
             internal_name: name,
             type: "radio",
-            label: getFieldLabel($step, name, $radios.first()),
             required: isFieldRequired($radios),
             options
         };
@@ -211,7 +164,6 @@ export function createFormSchemaService({ state, config }) {
         return {
             internal_name: name,
             type: "checkbox",
-            label: getFieldLabel($step, name, $hiddenAggregator.length ? $hiddenAggregator : $checkboxes.first()),
             required: isFieldRequired($hiddenAggregator.length ? $hiddenAggregator : $checkboxes),
             options
         };
@@ -240,7 +192,6 @@ export function createFormSchemaService({ state, config }) {
         return {
             internal_name: name,
             type: "select",
-            label: getFieldLabel($step, name, $select),
             required: isFieldRequired($select),
             options
         };
@@ -271,7 +222,6 @@ export function createFormSchemaService({ state, config }) {
         return {
             internal_name: name,
             type: getInputType($field),
-            label: getFieldLabel($step, name, $field),
             required: isFieldRequired($field),
             options: []
         };
