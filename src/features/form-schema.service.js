@@ -51,6 +51,40 @@ export function createFormSchemaService({ state, config }) {
         return stepName;
     }
 
+    function isElementActive($el) {
+        if ($el.is("[hidden]")) return false;
+        if ($el.css("display") === "none") return false;
+        if ($el.css("visibility") === "hidden") return false;
+
+        return true;
+    }
+
+    function collectAddedElements() {
+        const selector = schemaConfig.addedElementSelector || "[context]";
+        const addedElements = [];
+
+        $(selector).each(function () {
+            const $el = $(this);
+
+            // Avoid duplicating elements already inside steps
+            if ($el.closest("[step]").length) return;
+
+            if (!isElementActive($el)) return;
+
+            const context = cleanText($el.attr("context"));
+            const visibilityFlagsRequired = parseList($el.attr("data-athena-show"));
+
+            if (!context) return;
+
+            addedElements.push({
+                context,
+                visibility_flags_required: visibilityFlagsRequired
+            });
+        });
+
+        return addedElements;
+    }
+
     function getFieldLabel($step, internalName, $field) {
         const schemaLabel = $field.attr("data-schema-label");
 
@@ -460,6 +494,8 @@ export function createFormSchemaService({ state, config }) {
             },
 
             steps: collectSteps(),
+
+            added_elements: collectAddedElements(),
 
             hidden_fields: hiddenResult.hiddenFields,
 

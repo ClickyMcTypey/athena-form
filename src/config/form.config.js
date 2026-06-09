@@ -273,6 +273,8 @@ export const FORM_CONFIG = {
     formSelector: "#athn_form",
     stepSelector: "[step]",
 
+    addedElementSelector: "[context]",
+
     excludedSteps: [
       "loading",
       "loading_chili",
