@@ -40,7 +40,9 @@ export function createFormSchemaService({ state, config }) {
     function getStepLabel($step) {
         const stepName = String($step.attr("step") || "");
 
-        const $heading = $step.find(".signup-b-quiz-heading").first();
+        const $heading = $step
+            .find(".signup-b-quiz-heading, .text-serif-founders-heading")
+            .first();
 
         const headingText = cleanText($heading.text());
 
