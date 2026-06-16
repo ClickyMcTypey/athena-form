@@ -114,15 +114,17 @@ export function createHubspotService({
 
   function buildContext() {
     const hutk = getCookie("hubspotutk");
-
     state.hubspotUtk = hutk;
     window.ut = hutk; // temporary old-code compatibility
 
     const context = {
-      hutk,
       pageUri: window.location.href,
       pageName: document.title,
     };
+
+    if (hutk && String(hutk).trim()) {
+      context.hutk = String(hutk).trim();
+    }
 
     if (state.userIp) {
       context.ipAddress = state.userIp;
