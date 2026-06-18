@@ -266,9 +266,9 @@ export const FORM_CONFIG = {
     outputJsonField: "leadformjson",
     outputVersionField: "leadformversion",
 
-    formVersion: "1",
-    formEffectivityDate: "2026-06-09",
-    formVersionContext: "added form version schema",
+    formVersion: "1.0.0",
+    formEffectivityDate: "2026-06-18",
+    formVersionContext: "test version 2",
 
     formSelector: "#athn_form",
     stepSelector: "[step]",
