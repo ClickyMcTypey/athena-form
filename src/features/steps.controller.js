@@ -63,7 +63,7 @@ export function createStepsController({
   }
 
   function getVisibleStepElements() {
-    return Object.values($("[step]").not("[skip]"));
+    return $("[step]").not("[skip]").toArray();
   }
 
   function getCurrentStep() {
