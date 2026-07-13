@@ -31,6 +31,8 @@ export function createStepsController({
       .join(" ");
 
     $el.html(html);
+
+    // Only reveal the parent after words are wrapped and hidden
     $el.attr("data-reveal-ready", "true");
   }
 
