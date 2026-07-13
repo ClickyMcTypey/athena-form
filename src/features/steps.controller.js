@@ -42,8 +42,20 @@ export function createStepsController({
     $el.find(".word-reveal").removeClass("is-visible");
   }
 
+  function showAllRevealWords($el) {
+    setupRevealElement($el);
+
+    $el.find(".word-reveal").addClass("is-visible");
+  }
+
   function startRevealForElement($el) {
-    resetRevealElement($el);
+    setupRevealElement($el);
+
+    // If already revealed once, do not animate again
+    if ($el.attr("data-reveal-fired") === "true") {
+      showAllRevealWords($el);
+      return;
+    }
 
     const duration = Number($el.attr("reveal"));
 
@@ -53,6 +65,9 @@ export function createStepsController({
 
     if (!$words.length) return;
 
+    // Mark as fired immediately so revisits do not replay
+    $el.attr("data-reveal-fired", "true");
+
     const fadeDuration = 120;
     const totalWords = $words.length;
 
@@ -61,7 +76,6 @@ export function createStepsController({
       return;
     }
 
-    // Last word starts early enough to finish fading by the total duration
     const revealDuration = Math.max(duration - fadeDuration, 0);
     const interval = revealDuration / (totalWords - 1);
 
