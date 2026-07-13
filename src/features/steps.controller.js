@@ -25,11 +25,9 @@ export function createStepsController({
   }
 
   function getInitialStep() {
-    const availableSteps = getAvailableSteps();
-
     return (
       config.steps?.initialStep ||
-      availableSteps[0] ||
+      $("[step]").not("[skip]").not("[prefilled]").first().attr("step") ||
       "1"
     );
   }
@@ -142,7 +140,17 @@ export function createStepsController({
     state.backLocked = false;
     state.nextLocked = false;
 
-    showInitialStep();
+    const initialStep = getInitialStep();
+
+    if (!state.hasInitializedStep) {
+      $("[step]").stop(true, true).hide();
+      $(`[step="${initialStep}"]`).stop(true, true).show();
+
+      state.currentStep = initialStep;
+      state.hasInitializedStep = true;
+
+      $("#athn_form").attr("data-steps-ready", "true");
+    }
 
     updateProgressBar();
 

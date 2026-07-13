@@ -162,12 +162,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
             animations.fadeInForm();
 
-            $("[step='1']")
-                .delay(100)
-                .queue(function (next) {
-                    animations.fadeInLeft($(this), steps.stepInit);
-                    next();
-                });
+            // $("[step='1']")
+            //     .delay(100)
+            //     .queue(function (next) {
+            //         animations.fadeInLeft($(this), steps.stepInit);
+            //         next();
+            //     });
 
             console.log("Athena form started");
         } catch (error) {
