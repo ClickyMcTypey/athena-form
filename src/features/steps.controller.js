@@ -290,6 +290,8 @@ export function createStepsController({
 
     const currentStep = getCurrentStep();
 
+    startRevealForStep(currentStep);
+
     scheduleAutoNext(currentStep);
 
     if (shouldHideBackButton(currentStep)) {
