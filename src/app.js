@@ -162,7 +162,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             animations.fadeInForm();
 
-            $("[step='1']")
+            const initialStep = FORM_CONFIG.steps?.initialStep || "1";
+
+            $(`[step='${initialStep}']`)
                 .delay(100)
                 .queue(function (next) {
                     animations.fadeInLeft($(this), steps.stepInit);
