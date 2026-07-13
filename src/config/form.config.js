@@ -50,11 +50,11 @@ export const FORM_CONFIG = {
   ],
 
   steps: {
-    initialStep: "v3-intro"
+    initialStep: "v3-intro" //also update no back buttons steps
   },
 
   noBackButtonSteps: [
-    "1",
+    "v3-intro",
     "loading",
     "email",
     "loading_chili",
