@@ -50,22 +50,28 @@ export function createStepsController({
 
     if (!delay || Number.isNaN(delay)) return;
 
-    // Show continue button on autonext steps
-    showProceedMaskForStep(stepName);
-
-    // Prevent this step from auto-nexting more than once
-    if ($step.attr("data-autonext-fired") === "true") return;
+    // If this step already auto-nexted before,
+    // do not auto-next again, but show the continue button.
+    if ($step.attr("data-autonext-fired") === "true") {
+      showProceedMaskForStep(stepName);
+      return;
+    }
 
     autoNextTimer = setTimeout(() => {
       autoNextTimer = null;
 
       const currentStep = getCurrentStep();
 
+      // User already moved away manually
       if (currentStep !== stepName) return;
 
+      // Extra safety
       if ($step.attr("data-autonext-fired") === "true") return;
 
       $step.attr("data-autonext-fired", "true");
+
+      // Only show the continue button after autonext has triggered
+      showProceedMaskForStep(stepName);
 
       const nextStep = getNextStep();
 
