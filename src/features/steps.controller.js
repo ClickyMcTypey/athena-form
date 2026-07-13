@@ -32,6 +32,8 @@ export function createStepsController({
     if ($step.attr("data-autonext-fired") === "true") return;
 
     autoNextTimer = setTimeout(() => {
+      autoNextTimer = null;
+
       const currentStep = getCurrentStep();
 
       // User already moved away manually
@@ -174,9 +176,9 @@ export function createStepsController({
   }
 
   function switchToStep(targetStep) {
-    const currentStep = getCurrentStep();
+    clearAutoNextTimer();
 
-    scheduleAutoNext(currentStep);
+    const currentStep = getCurrentStep();
 
     const currentStepElement = $(`[step="${currentStep}"]`)[0];
     const destinationStepElement = $(`[step="${targetStep}"]`)[0];
