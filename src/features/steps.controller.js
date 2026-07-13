@@ -24,6 +24,26 @@ export function createStepsController({
     return Object.values($("[step]").not("[skip]"));
   }
 
+  function getInitialStep() {
+    return (
+      config.steps?.initialStep ||
+      $("[step]").not("[skip]").not("[prefilled]").first().attr("step") ||
+      "1"
+    );
+  }
+
+  function showInitialStep() {
+    if (state.hasInitializedStep) return;
+
+    const initialStep = getInitialStep();
+
+    $("[step]").hide();
+    $(`[step="${initialStep}"]`).show();
+
+    state.currentStep = initialStep;
+    state.hasInitializedStep = true;
+  }
+
   function getCurrentStep() {
     let currentStep = null;
 
@@ -98,6 +118,8 @@ export function createStepsController({
   function stepInit() {
     state.backLocked = false;
     state.nextLocked = false;
+
+    showInitialStep();
 
     updateProgressBar();
 
