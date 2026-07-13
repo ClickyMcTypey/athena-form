@@ -24,6 +24,26 @@ export function createStepsController({
     return Object.values($("[step]").not("[skip]"));
   }
 
+  function getInitialStep() {
+    return (
+      config.steps?.initialStep ||
+      $("[step]").not("[skip]").not("[prefilled]").first().attr("step") ||
+      "1"
+    );
+  }
+
+  function showInitialStep() {
+    if (state.hasInitializedStep) return;
+
+    const initialStep = getInitialStep();
+
+    $("[step]").hide();
+    $(`[step="${initialStep}"]`).show();
+
+    state.currentStep = initialStep;
+    state.hasInitializedStep = true;
+  }
+
   function getCurrentStep() {
     let currentStep = null;
 
@@ -39,24 +59,24 @@ export function createStepsController({
 
   function getNextStep() {
     const currentStep = getCurrentStep();
-    const currentElement = $(`[step="${currentStep}"]`)[0];
-    const steps = getVisibleStepElements();
+    const availableSteps = getAvailableSteps();
 
-    const currentIndex = steps.indexOf(currentElement);
-    const nextElement = steps[currentIndex + 1];
+    const currentIndex = availableSteps.indexOf(currentStep);
 
-    return nextElement ? $(nextElement).attr("step") : null;
+    if (currentIndex === -1) return availableSteps[0] || null;
+
+    return availableSteps[currentIndex + 1] || null;
   }
 
   function getPreviousStep() {
     const currentStep = getCurrentStep();
-    const currentElement = $(`[step="${currentStep}"]`)[0];
-    const steps = getVisibleStepElements();
+    const availableSteps = getAvailableSteps();
 
-    const currentIndex = steps.indexOf(currentElement);
-    const previousElement = steps[currentIndex - 1];
+    const currentIndex = availableSteps.indexOf(currentStep);
 
-    return previousElement ? $(previousElement).attr("step") : null;
+    if (currentIndex <= 0) return null;
+
+    return availableSteps[currentIndex - 1] || null;
   }
 
   function getSteps() {
@@ -95,9 +115,42 @@ export function createStepsController({
     return config.progressSteps.includes(targetStepName);
   }
 
+  function getAvailableSteps() {
+    const excludedSteps = ["loading", "loading_chili", "calendar", "success", "error", "closed"];
+
+    return $("[step]")
+      .filter(function () {
+        const $step = $(this);
+        const stepName = String($step.attr("step") || "");
+
+        if (!stepName) return false;
+        if (excludedSteps.includes(stepName)) return false;
+        if ($step.is("[skip]")) return false;
+        if ($step.is("[prefilled]")) return false;
+
+        return true;
+      })
+      .map(function () {
+        return String($(this).attr("step"));
+      })
+      .get();
+  }
+
   function stepInit() {
     state.backLocked = false;
     state.nextLocked = false;
+
+    const initialStep = getInitialStep();
+
+    if (!state.hasInitializedStep) {
+      $("[step]").stop(true, true).hide();
+      $(`[step="${initialStep}"]`).stop(true, true).show();
+
+      state.currentStep = initialStep;
+      state.hasInitializedStep = true;
+
+      $("#athn_form").attr("data-steps-ready", "true");
+    }
 
     updateProgressBar();
 
