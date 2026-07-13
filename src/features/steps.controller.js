@@ -95,10 +95,13 @@ export function createStepsController({
 
     if (!delay || Number.isNaN(delay)) return;
 
-    // If this step already auto-nexted before,
-    // do not auto-next again, but show the continue button.
+    // If already auto-nexted, do not auto-next again.
+    // Just reveal continue button after slide animation settles.
     if ($step.attr("data-autonext-fired") === "true") {
-      showProceedMaskForStep(stepName);
+      setTimeout(() => {
+        showProceedMaskForStep(stepName);
+      }, 300);
+
       return;
     }
 
@@ -110,20 +113,17 @@ export function createStepsController({
       const currentStep = getCurrentStep();
 
       if (currentStep !== stepName) return;
-
       if ($step.attr("data-autonext-fired") === "true") return;
 
       $step.attr("data-autonext-fired", "true");
-
-      showProceedMaskForStep(stepName);
 
       const nextStep = getNextStep();
 
       if (!nextStep) return;
 
-      setTimeout(() => {
-        switchToStep(nextStep);
-      }, 300);
+      // No delay here.
+      // Auto-next happens exactly when progress reaches 100%.
+      switchToStep(nextStep);
     }, delay);
   }
 
