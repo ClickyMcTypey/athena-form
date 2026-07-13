@@ -51,7 +51,17 @@ export function createStepsController({
 
     if (!$words.length) return;
 
-    const interval = duration / $words.length;
+    const fadeDuration = 120;
+    const totalWords = $words.length;
+
+    if (totalWords === 1) {
+      $words.first().addClass("is-visible");
+      return;
+    }
+
+    // Last word starts early enough to finish fading by the total duration
+    const revealDuration = Math.max(duration - fadeDuration, 0);
+    const interval = revealDuration / (totalWords - 1);
 
     $words.each(function (index) {
       const word = this;
