@@ -8,6 +8,48 @@ export function createStepsController({
   animations,
 }) {
 
+  let autoNextTimer = null;
+
+  function clearAutoNextTimer() {
+    if (autoNextTimer) {
+      clearTimeout(autoNextTimer);
+      autoNextTimer = null;
+    }
+  }
+
+  function scheduleAutoNext(stepName) {
+    clearAutoNextTimer();
+
+    const $step = $(`[step="${stepName}"]`).first();
+
+    if (!$step.length) return;
+
+    const delay = Number($step.attr("autonext"));
+
+    if (!delay || Number.isNaN(delay)) return;
+
+    // Prevent this step from auto-nexting more than once
+    if ($step.attr("data-autonext-fired") === "true") return;
+
+    autoNextTimer = setTimeout(() => {
+      const currentStep = getCurrentStep();
+
+      // User already moved away manually
+      if (currentStep !== stepName) return;
+
+      // Extra safety
+      if ($step.attr("data-autonext-fired") === "true") return;
+
+      $step.attr("data-autonext-fired", "true");
+
+      const nextStep = getNextStep();
+
+      if (!nextStep) return;
+
+      switchToStep(nextStep);
+    }, delay);
+  }
+
   function shouldHideBackButton(stepName) {
     return config.noBackButtonSteps?.includes(String(stepName));
   }
