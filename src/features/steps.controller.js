@@ -8,6 +8,47 @@ export function createStepsController({
   animations,
 }) {
 
+  let $activeAutoNextProgress = null;
+
+  function getAutoNextProgressBar($step) {
+    let $bar = $step.children("[autonext-progress]").first();
+
+    if (!$bar.length) {
+      $bar = $('<div autonext-progress></div>');
+      $step.prepend($bar);
+    }
+
+    return $bar;
+  }
+
+  function resetAutoNextProgress() {
+    if ($activeAutoNextProgress?.length) {
+      $activeAutoNextProgress.stop(true, true).css({
+        width: "0%"
+      });
+    }
+
+    $activeAutoNextProgress = null;
+  }
+
+  function startAutoNextProgress($step, delay) {
+    const $bar = getAutoNextProgressBar($step);
+
+    $bar.stop(true, true).css({
+      width: "0%"
+    });
+
+    $activeAutoNextProgress = $bar;
+
+    $bar.animate(
+      {
+        width: "100%"
+      },
+      delay,
+      "linear"
+    );
+  }
+
   function showProceedMaskForStep(stepName) {
     const $mask = $(`[step="${stepName}"] [mask="proceed"]`).first();
 
@@ -39,6 +80,8 @@ export function createStepsController({
       clearTimeout(autoNextTimer);
       autoNextTimer = null;
     }
+
+    resetAutoNextProgress();
   }
 
   function scheduleAutoNext(stepName) {
@@ -59,27 +102,28 @@ export function createStepsController({
       return;
     }
 
+    startAutoNextProgress($step, delay);
+
     autoNextTimer = setTimeout(() => {
       autoNextTimer = null;
 
       const currentStep = getCurrentStep();
 
-      // User already moved away manually
       if (currentStep !== stepName) return;
 
-      // Extra safety
       if ($step.attr("data-autonext-fired") === "true") return;
 
       $step.attr("data-autonext-fired", "true");
 
-      // Only show the continue button after autonext has triggered
       showProceedMaskForStep(stepName);
 
       const nextStep = getNextStep();
 
       if (!nextStep) return;
 
-      switchToStep(nextStep);
+      setTimeout(() => {
+        switchToStep(nextStep);
+      }, 300);
     }, delay);
   }
 
