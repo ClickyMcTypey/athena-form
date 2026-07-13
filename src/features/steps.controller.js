@@ -8,6 +8,74 @@ export function createStepsController({
   animations,
 }) {
 
+  let revealTimers = [];
+
+  function clearRevealTimers() {
+    revealTimers.forEach((timer) => clearTimeout(timer));
+    revealTimers = [];
+  }
+
+  function setupRevealElement($el) {
+    if ($el.attr("data-reveal-ready") === "true") return;
+
+    const originalText = $el.text().trim();
+
+    if (!originalText) return;
+
+    $el.attr("data-reveal-original", originalText);
+
+    const words = originalText.split(/\s+/);
+
+    const html = words
+      .map((word) => `<span class="word-reveal">${word}</span>`)
+      .join(" ");
+
+    $el.html(html);
+    $el.attr("data-reveal-ready", "true");
+  }
+
+  function resetRevealElement($el) {
+    setupRevealElement($el);
+
+    $el.find(".word-reveal").removeClass("is-visible");
+  }
+
+  function startRevealForElement($el) {
+    resetRevealElement($el);
+
+    const duration = Number($el.attr("reveal"));
+
+    if (!duration || Number.isNaN(duration)) return;
+
+    const $words = $el.find(".word-reveal");
+
+    if (!$words.length) return;
+
+    const interval = duration / $words.length;
+
+    $words.each(function (index) {
+      const word = this;
+
+      const timer = setTimeout(() => {
+        $(word).addClass("is-visible");
+      }, interval * index);
+
+      revealTimers.push(timer);
+    });
+  }
+
+  function startRevealForStep(stepName) {
+    clearRevealTimers();
+
+    const $step = $(`[step="${stepName}"]`).first();
+
+    if (!$step.length) return;
+
+    $step.find("[reveal]").each(function () {
+      startRevealForElement($(this));
+    });
+  }
+
   let $activeAutoNextProgress = null;
 
   function getAutoNextProgressBar($step) {
