@@ -49,6 +49,10 @@ export const FORM_CONFIG = {
     "gt",
   ],
 
+  steps: {
+    initialStep: "v3-intro"
+  },
+
   noBackButtonSteps: [
     "1",
     "loading",
