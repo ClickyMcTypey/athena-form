@@ -145,6 +145,8 @@ export function createStepsController({
 
     const currentStep = getCurrentStep();
 
+    scheduleAutoNext(currentStep);
+
     if (shouldHideBackButton(currentStep)) {
       animations.toggleBackButton("hide");
     }
@@ -173,6 +175,8 @@ export function createStepsController({
 
   function switchToStep(targetStep) {
     const currentStep = getCurrentStep();
+
+    scheduleAutoNext(currentStep);
 
     const currentStepElement = $(`[step="${currentStep}"]`)[0];
     const destinationStepElement = $(`[step="${targetStep}"]`)[0];
