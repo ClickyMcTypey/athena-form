@@ -24,6 +24,23 @@ export function createValidationService({
     return names;
   }
 
+  function hasInvalidEmailDots(email) {
+    const value = String(email || "").trim();
+
+    if (value.includes("..")) return true;
+
+    const [localPart, domainPart] = value.split("@");
+
+    if (!localPart || !domainPart) return true;
+
+    if (localPart.startsWith(".") || localPart.endsWith(".")) return true;
+    if (domainPart.startsWith(".") || domainPart.endsWith(".")) return true;
+
+    return domainPart
+      .split(".")
+      .some((part) => !part || part.startsWith("-") || part.endsWith("-"));
+  }
+
   function findFieldByName($step, name) {
     return $step.find("input[name], select[name]").filter(function () {
       return $(this).attr("name") === name;
@@ -174,9 +191,9 @@ export function createValidationService({
 
     $email.each(function () {
       const $field = $(this);
-      const value = $field.val();
+      const value = String($field.val() || "").trim();
 
-      if (validateEmail(value)) {
+      if (validateEmail(value) && !hasInvalidEmailDots(value)) {
         markValid($field);
       } else {
         markInvalid($field);
