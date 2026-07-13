@@ -13,21 +13,23 @@ export function createStepsController({
 
     if (!$mask.length) return;
 
-    const $button = $mask.find('[cmd="proceed"]').first();
+    setTimeout(() => {
+      const $button = $mask.find('[cmd="proceed"]').first();
 
-    const buttonHeight =
-      $button.outerHeight(true) ||
-      $mask.children().first().outerHeight(true) ||
-      $mask[0].scrollHeight;
+      const buttonHeight =
+        $button.outerHeight(true) ||
+        $mask.children().first().outerHeight(true) ||
+        $mask[0].scrollHeight;
 
-    const paddingTop = parseFloat($mask.css("padding-top")) || 0;
-    const paddingBottom = parseFloat($mask.css("padding-bottom")) || 0;
+      const paddingTop = parseFloat($mask.css("padding-top")) || 0;
+      const paddingBottom = parseFloat($mask.css("padding-bottom")) || 0;
 
-    $mask.stop(true, true).css({
-      height: `${buttonHeight + paddingTop + paddingBottom}px`,
-      opacity: 1,
-      overflow: "visible"
-    });
+      $mask.stop(true, true).css({
+        height: `${buttonHeight + paddingTop + paddingBottom}px`,
+        opacity: 1,
+        overflow: "visible"
+      });
+    }, 300);
   }
 
   let autoNextTimer = null;
