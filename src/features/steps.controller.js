@@ -8,6 +8,28 @@ export function createStepsController({
   animations,
 }) {
 
+  function showProceedMaskForStep(stepName) {
+    const $mask = $(`[step="${stepName}"] [mask="proceed"]`).first();
+
+    if (!$mask.length) return;
+
+    const $button = $mask.find('[cmd="proceed"]').first();
+
+    const buttonHeight =
+      $button.outerHeight(true) ||
+      $mask.children().first().outerHeight(true) ||
+      $mask[0].scrollHeight;
+
+    const paddingTop = parseFloat($mask.css("padding-top")) || 0;
+    const paddingBottom = parseFloat($mask.css("padding-bottom")) || 0;
+
+    $mask.stop(true, true).css({
+      height: `${buttonHeight + paddingTop + paddingBottom}px`,
+      opacity: 1,
+      overflow: "visible"
+    });
+  }
+
   let autoNextTimer = null;
 
   function clearAutoNextTimer() {
@@ -28,6 +50,9 @@ export function createStepsController({
 
     if (!delay || Number.isNaN(delay)) return;
 
+    // Show continue button on autonext steps
+    showProceedMaskForStep(stepName);
+
     // Prevent this step from auto-nexting more than once
     if ($step.attr("data-autonext-fired") === "true") return;
 
@@ -36,10 +61,8 @@ export function createStepsController({
 
       const currentStep = getCurrentStep();
 
-      // User already moved away manually
       if (currentStep !== stepName) return;
 
-      // Extra safety
       if ($step.attr("data-autonext-fired") === "true") return;
 
       $step.attr("data-autonext-fired", "true");
