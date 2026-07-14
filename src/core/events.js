@@ -129,10 +129,11 @@ export function bindEvents({
             branching?.applyFromStep(stepName);
 
             if (visibility?.applyAnswerRules) {
-                visibility.applyAnswerRules(currentStep);
+                visibility.applyAnswerRules(stepName);
             }
 
             const nextStep = steps.getNextStep();
+
             if (nextStep) {
                 steps.switchToStep(nextStep);
                 scrollToFormTop();
@@ -233,7 +234,9 @@ export function bindEvents({
             maybeShowBackButton();
             fireStepAttribution();
 
-            branching?.applyFromStep(steps.getCurrentStep());
+            const currentStep = steps.getCurrentStep();
+
+            branching?.applyFromStep(currentStep);
 
             if (visibility?.applyAnswerRules) {
                 visibility.applyAnswerRules(currentStep);
