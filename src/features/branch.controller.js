@@ -9,27 +9,38 @@ export function createBranchController({
     return String(value).trim();
   }
 
-  function getStepBranches(element) {
-    const rawBranches = $(element).attr("branches");
+  function normalizeBranches(value) {
+    if (!value) return [];
 
-    if (!rawBranches) return [];
+    if (Array.isArray(value)) {
+      return value.map(String).map((item) => item.trim()).filter(Boolean);
+    }
 
-    return rawBranches
+    return String(value)
       .split(",")
-      .map((branch) => branch.trim())
+      .map((item) => item.trim())
       .filter(Boolean);
   }
 
-  function stepMatchesBranch(element, branchId) {
-    const branches = getStepBranches(element);
+  function getStepBranches(element) {
+    return normalizeBranches($(element).attr("branches"));
+  }
 
-    if (!branches.length) return true;
+  function stepMatchesBranches(element, activeBranches) {
+    const stepBranches = getStepBranches(element);
 
-    return branches.includes(String(branchId));
+    // No [branches] means global
+    if (!stepBranches.length) return true;
+
+    if (!activeBranches.length) return false;
+
+    return stepBranches.some((branch) => activeBranches.includes(branch));
   }
 
   function applyBranchVisibility() {
-    const currentBranch = normalizeBranch(state.currentBranch);
+    const activeBranches = normalizeBranches(
+      state.currentBranches || state.currentBranch
+    );
 
     $("[branches]").each(function () {
       const $step = $(this);
@@ -40,12 +51,12 @@ export function createBranchController({
         return;
       }
 
-      if (!currentBranch) {
+      if (!activeBranches.length) {
         $step.attr("skip", "");
         return;
       }
 
-      if (stepMatchesBranch(this, currentBranch)) {
+      if (stepMatchesBranches(this, activeBranches)) {
         $step.removeAttr("skip");
       } else {
         $step.attr("skip", "");
@@ -54,16 +65,16 @@ export function createBranchController({
   }
 
   function setBranch(branchId) {
-    const normalizedBranch = normalizeBranch(branchId);
+    const normalizedBranches = normalizeBranches(branchId);
 
-    state.currentBranch = normalizedBranch;
+    state.currentBranches = normalizedBranches;
+
+    // Keep this for backward compatibility
+    state.currentBranch = normalizedBranches[0] || null;
 
     applyBranchVisibility();
 
-    //hidden log
-    //console.log("Current branch:", normalizedBranch);
-
-    return normalizedBranch;
+    return normalizedBranches;
   }
 
   function getSelectedValueForRule(stepName, rule) {
@@ -95,7 +106,7 @@ export function createBranchController({
     const selectedValue = getSelectedValueForRule(stepName, rule);
 
     if (!selectedValue) {
-      return rule.fallbackBranch || "1";
+      return normalizeBranches(rule.fallbackBranch || "1");
     }
 
     const override = rule.experimentOverrides?.[selectedValue];
@@ -109,19 +120,19 @@ export function createBranchController({
         globalValue &&
         override.allowedBranches?.includes(String(globalValue))
       ) {
-        return String(globalValue);
+        return normalizeBranches(globalValue);
       }
 
-      return override.fallbackBranch || rule.fallbackBranch || "1";
+      return normalizeBranches(override.fallbackBranch || rule.fallbackBranch || "1");
     }
 
     const mappedBranch = rule.map?.[selectedValue];
 
     if (mappedBranch) {
-      return mappedBranch;
+      return normalizeBranches(mappedBranch);
     }
 
-    return rule.fallbackBranch || "1";
+    return normalizeBranches(rule.fallbackBranch || "1");
   }
 
   function applyFromStep(stepName) {
@@ -136,6 +147,7 @@ export function createBranchController({
 
   function reset() {
     state.currentBranch = null;
+    state.currentBranches = [];
     applyBranchVisibility();
   }
 
