@@ -133,6 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 validation,
                 animations,
                 branching,
+                visibility,
                 attribution,
             });
 

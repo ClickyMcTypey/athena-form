@@ -6,6 +6,7 @@ export function bindEvents({
     validation,
     animations,
     branching,
+    visibility,
     attribution,
 }) {
     function getStepNameFromElement(element) {
