@@ -18,19 +18,51 @@ export function createStepsController({
   function setupRevealElement($el) {
     if ($el.attr("data-reveal-ready") === "true") return;
 
-    const originalText = $el.text().trim();
+    function wrapTextNode(textNode) {
+      const text = textNode.nodeValue;
 
-    if (!originalText) return;
+      if (!text || !text.trim()) return;
 
-    $el.attr("data-reveal-original", originalText);
+      const parts = text.split(/(\s+)/);
+      const fragment = document.createDocumentFragment();
 
-    const words = originalText.split(/\s+/);
+      parts.forEach((part) => {
+        if (!part) return;
 
-    const html = words
-      .map((word) => `<span class="word-reveal">${word}</span>`)
-      .join(" ");
+        if (/^\s+$/.test(part)) {
+          fragment.appendChild(document.createTextNode(part));
+          return;
+        }
 
-    $el.html(html);
+        const span = document.createElement("span");
+        span.className = "word-reveal";
+        span.textContent = part;
+        fragment.appendChild(span);
+      });
+
+      textNode.parentNode.replaceChild(fragment, textNode);
+    }
+
+    function walk(node) {
+      const childNodes = Array.from(node.childNodes);
+
+      childNodes.forEach((child) => {
+        if (child.nodeType === Node.TEXT_NODE) {
+          wrapTextNode(child);
+          return;
+        }
+
+        if (child.nodeType !== Node.ELEMENT_NODE) return;
+
+        if (child.classList.contains("word-reveal")) return;
+        if (["SCRIPT", "STYLE"].includes(child.tagName)) return;
+
+        walk(child);
+      });
+    }
+
+    walk($el[0]);
+
     $el.attr("data-reveal-ready", "true");
   }
 
