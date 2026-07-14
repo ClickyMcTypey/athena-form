@@ -6,6 +6,83 @@ export function createVisibilityController({
 }) {
     const visibilityConfig = config.visibility || {};
 
+    function normalizeList(value) {
+        if (!value) return [];
+
+        if (Array.isArray(value)) {
+            return value.map(String).map((item) => item.trim()).filter(Boolean);
+        }
+
+        return String(value)
+            .split(",")
+            .map((item) => item.trim())
+            .filter(Boolean);
+    }
+
+    function ruleMatchesValue(rule, selectedValue) {
+        if (selectedValue === null || selectedValue === undefined) return false;
+
+        const selectedValues = normalizeList(selectedValue);
+
+        if (!selectedValues.length) return false;
+
+        const acceptedValues = rule.values
+            ? normalizeList(rule.values)
+            : normalizeList(rule.value);
+
+        if (!acceptedValues.length) return false;
+
+        return selectedValues.some((value) => acceptedValues.includes(value));
+    }
+
+    function getSelectedValueForRule(stepName, rule) {
+        if (!rule?.field) return null;
+
+        const $step = $(`[step="${stepName}"]`);
+
+        // Radio
+        const $checked = $step.find(`[name="${rule.field}"]:checked`);
+
+        if ($checked.length) {
+            return $checked.val();
+        }
+
+        // Checkbox aggregator hidden field or normal field
+        const $field = $step.find(`[name="${rule.field}"]`).first();
+
+        if ($field.length) {
+            return $field.val();
+        }
+
+        return null;
+    }
+
+    function applyAnswerRules(stepName) {
+        const rules = visibilityConfig.answerRules || [];
+
+        if (!rules.length) return;
+
+        rules.forEach((rule) => {
+            if (String(rule.step) !== String(stepName)) return;
+            if (!rule.flag) return;
+
+            const selectedValue = getSelectedValueForRule(stepName, rule);
+            const isMatch = ruleMatchesValue(rule, selectedValue);
+
+            if (isMatch) {
+                enable(rule.flag, {
+                    apply: false
+                });
+            } else {
+                disable(rule.flag, {
+                    apply: false
+                });
+            }
+        });
+
+        apply();
+    }
+
     function isEnabled() {
         return visibilityConfig.enabled === true;
     }
@@ -178,5 +255,6 @@ export function createVisibilityController({
         reset,
         hasFlag,
         syncFromGlobal,
+        applyAnswerRules,
     };
 }
