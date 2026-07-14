@@ -267,6 +267,27 @@ export const FORM_CONFIG = {
 
     answerRules: [
       {
+        id: "show_q1_yes",
+        step: "1",
+        field: "hbform_q1_worked_with_an_assistant",
+        values: [
+          "yes_i_have_one_now",
+          "yes_but_not_currently"
+        ],
+        flag: "hbform_q1_yes",
+        action: "enable"
+      },
+      {
+        id: "show_q1_no",
+        step: "1",
+        field: "hbform_q1_worked_with_an_assistant",
+        values: [
+          "no_never"
+        ],
+        flag: "hbform_q1_no",
+        action: "enable"
+      },
+      {
         id: "show_q2_overloaded",
         step: "2",
         field: "hbform_q2_current_workload",
