@@ -69,7 +69,7 @@ export const FORM_CONFIG = {
   },
 
   branching: {
-    enabled: true,
+    enabled: false,
 
     rules: {
       "1": {
@@ -308,7 +308,48 @@ export const FORM_CONFIG = {
         ],
         flag: "hbform_q2_manageable",
         action: "enable"
-      }
+      },
+      {
+        id: "show_q16_time",
+        step: "16",
+        field: "hbform_q16_what_do_you_want",
+        values: [
+          "time"
+        ],
+        flag: "hbform_q16_time",
+        action: "enable"
+      },
+      {
+        id: "show_q16_focus",
+        step: "16",
+        field: "hbform_q16_what_do_you_want",
+        values: [
+          "focus"
+        ],
+        flag: "hbform_q16_focus",
+        action: "enable"
+      },
+      {
+        id: "show_q16_calm",
+        step: "16",
+        field: "hbform_q16_what_do_you_want",
+        values: [
+          "calm"
+        ],
+        flag: "hbform_q16_calm",
+        action: "enable"
+      },
+      {
+        id: "show_q16_freedom",
+        step: "16",
+        field: "hbform_q16_what_do_you_want",
+        values: [
+          "freedom",
+          "all_four"
+        ],
+        flag: "hbform_q16_freedom",
+        action: "enable"
+      },
     ],
 
     selectors: {
