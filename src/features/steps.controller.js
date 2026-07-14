@@ -31,63 +31,69 @@ export function createStepsController({
       .join(" ");
 
     $el.html(html);
-
-    // Only reveal the parent after words are wrapped and hidden
     $el.attr("data-reveal-ready", "true");
-  }
-
-  function resetRevealElement($el) {
-    setupRevealElement($el);
-
-    $el.find(".word-reveal").removeClass("is-visible");
   }
 
   function showAllRevealWords($el) {
     setupRevealElement($el);
 
+    $el.attr("data-reveal-active", "true");
     $el.find(".word-reveal").addClass("is-visible");
   }
 
-  function startRevealForElement($el) {
+  function scheduleRevealForElement($el, startDelay) {
     setupRevealElement($el);
 
-    // If already revealed once, do not animate again
+    // Already revealed once: show instantly, do not replay
     if ($el.attr("data-reveal-fired") === "true") {
       showAllRevealWords($el);
-      return;
+      return 0;
     }
 
     const duration = Number($el.attr("reveal"));
 
-    if (!duration || Number.isNaN(duration)) return;
+    if (!duration || Number.isNaN(duration)) {
+      showAllRevealWords($el);
+      return 0;
+    }
 
     const $words = $el.find(".word-reveal");
 
-    if (!$words.length) return;
+    if (!$words.length) return 0;
 
-    // Mark as fired immediately so revisits do not replay
-    $el.attr("data-reveal-fired", "true");
+    $el.removeAttr("data-reveal-active");
+    $words.removeClass("is-visible");
 
-    const fadeDuration = 120;
-    const totalWords = $words.length;
+    const startTimer = setTimeout(() => {
+      $el.attr("data-reveal-fired", "true");
+      $el.attr("data-reveal-active", "true");
 
-    if (totalWords === 1) {
-      $words.first().addClass("is-visible");
-      return;
-    }
+      const fadeDuration = 120;
+      const totalWords = $words.length;
 
-    const revealDuration = Math.max(duration - fadeDuration, 0);
-    const interval = revealDuration / (totalWords - 1);
+      if (totalWords === 1) {
+        $words.first().addClass("is-visible");
+        return;
+      }
 
-    $words.each(function (index) {
-      const word = this;
+      const revealDuration = Math.max(duration - fadeDuration, 0);
+      const interval = revealDuration / (totalWords - 1);
 
-      const timer = setTimeout(() => {
-        $(word).addClass("is-visible");
-      }, interval * index);
+      $words.each(function (index) {
+        const word = this;
 
-      revealTimers.push(timer);
-    });
+        const wordTimer = setTimeout(() => {
+          $(word).addClass("is-visible");
+        }, interval * index);
+
+        revealTimers.push(wordTimer);
+      });
+    }, startDelay);
+
+    revealTimers.push(startTimer);
+
+    // This controls when the next [reveal] element starts
+    return duration;
   }
 
   function startRevealForStep(stepName) {
@@ -97,8 +103,19 @@ export function createStepsController({
 
     if (!$step.length) return;
 
-    $step.find("[reveal]").each(function () {
-      startRevealForElement($(this));
+    const $reveals = $step
+      .find("[reveal]")
+      .filter(function () {
+        // Avoid nested reveal elements causing double scheduling
+        return $(this).parents("[reveal]").length === 0;
+      });
+
+    let cumulativeDelay = 0;
+
+    $reveals.each(function () {
+      const duration = scheduleRevealForElement($(this), cumulativeDelay);
+
+      cumulativeDelay += duration;
     });
   }
 
@@ -189,13 +206,8 @@ export function createStepsController({
 
     if (!delay || Number.isNaN(delay)) return;
 
-    // If already auto-nexted, do not auto-next again.
-    // Just reveal continue button after slide animation settles.
     if ($step.attr("data-autonext-fired") === "true") {
-      setTimeout(() => {
-        showProceedMaskForStep(stepName);
-      }, 300);
-
+      showProceedMaskForStep(stepName);
       return;
     }
 
