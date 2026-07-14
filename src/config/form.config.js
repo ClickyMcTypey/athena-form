@@ -276,6 +276,17 @@ export const FORM_CONFIG = {
         ],
         flag: "hbform_q2_overloaded",
         action: "enable"
+      },
+      {
+        id: "show_q2_manageable",
+        step: "2",
+        field: "hbform_q2_current_workload",
+        values: [
+          "manageable",
+          "busy_but_under_control"
+        ],
+        flag: "hbform_q2_manageable",
+        action: "enable"
       }
     ],
 
