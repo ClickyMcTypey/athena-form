@@ -79,7 +79,19 @@ export const FORM_CONFIG = {
         map: {
           "yes_but_not_currently": ["1"],
           "yes_i_have_one_now": ["1"],
-          "no_never": ["2", "3"],
+          "no_never": ["2"],
+        },
+
+      },
+      "2": {
+        field: "hbform_q2_current_workload",
+        fallbackBranch: ["1"],
+
+        map: {
+          "overloaded": ["2", "3"],
+          "constantly_firefighting": ["3"],
+          "manageable": ["2", "3"],
+          "busy_but_under_control": ["2", "3"],
         },
 
       },
@@ -251,6 +263,20 @@ export const FORM_CONFIG = {
         referrerIncludes: "foundersatscale.com",
         flag: "founders-at-scale",
       },
+    ],
+
+    answerRules: [
+      {
+        id: "show_q2_overloaded",
+        step: "2",
+        field: "hbform_q2_current_workload",
+        values: [
+          "overloaded",
+          "constantly_firefighting"
+        ],
+        flag: "hbform_q2_overloaded",
+        action: "enable"
+      }
     ],
 
     selectors: {
