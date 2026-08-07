@@ -9,6 +9,25 @@ export function bindEvents({
     attribution,
     scoring,
 }) {
+    function submitFromCallStep(button, postSubmitAction) {
+        const $button = $(button);
+
+        if ($button.data("is-submitting")) return;
+
+        $button.data("is-submitting", true);
+        $button.prop("disabled", true);
+
+        if (window.AthenaForm?.submission?.submit) {
+            window.AthenaForm.submission.submit({
+                postSubmitAction
+            });
+        } else if (window.main?.form?.s) {
+            window.main.form.s({
+                postSubmitAction
+            });
+        }
+    }
+
     function routeToCallStepIfNeeded(currentStep) {
         if (currentStep !== "info") return false;
 
