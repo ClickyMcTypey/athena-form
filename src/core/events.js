@@ -8,6 +8,47 @@ export function bindEvents({
     branching,
     attribution,
 }) {
+    function routeToCallStepIfNeeded(currentStep) {
+        if (currentStep !== "info") return false;
+
+        if (!visibility?.hasFlag?.("call-flow")) return false;
+
+        let scoringResult = null;
+
+        try {
+            if (window.AthenaForm?.scoring?.calculateAndWrite) {
+                scoringResult = window.AthenaForm.scoring.calculateAndWrite();
+            } else if (scoring?.calculateAndWrite) {
+                scoringResult = scoring.calculateAndWrite();
+            }
+        } catch (error) {
+            console.error("Call step scoring failed:", error);
+            return false;
+        }
+
+        const isTier3 = scoringResult?.tier === "tier_3";
+
+        if (isTier3) {
+            visibility.disable?.("show-call-step", { apply: false });
+            visibility.enable?.("show-call-t3-step", { apply: false });
+            visibility.apply?.();
+
+            steps.switchToStep("call-t3");
+            scrollToFormTop();
+
+            return true;
+        }
+
+        visibility.disable?.("show-call-t3-step", { apply: false });
+        visibility.enable?.("show-call-step", { apply: false });
+        visibility.apply?.();
+
+        steps.switchToStep("call");
+        scrollToFormTop();
+
+        return true;
+    }
+
     function getStepNameFromElement(element) {
         return $(element).closest("[step]").attr("step");
     }
