@@ -11,6 +11,21 @@ export function createSubmissionController({
   errorLogger,
   formSchema
 }) {
+  function setCallRedirectField(postSubmitAction) {
+    const fieldName = "growthtest_202608_chrislivelink";
+    const value = postSubmitAction === "redirect" ? "calledchris" : "";
+
+    let $field = $(`[name="${fieldName}"]`).first();
+
+    if (!$field.length) {
+      $field = $(`<input type="hidden" name="${fieldName}" id="${fieldName}">`);
+      $("#athn_form").append($field);
+    }
+
+    $field.val(value);
+    $field.attr("value", value);
+  }
+
   function hasHoneypotValue() {
     const value = $("[honey]").val();
     return String(value || "").trim() !== "";
