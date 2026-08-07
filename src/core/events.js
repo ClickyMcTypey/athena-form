@@ -210,6 +210,22 @@ export function bindEvents({
             e.preventDefault();
             e.stopImmediatePropagation();
 
+            const currentStep = steps.getCurrentStep();
+
+            if (
+                currentStep === "info" &&
+                visibility?.hasFlag?.("show-call-step")
+            ) {
+                const nextStep = steps.getNextStep();
+
+                if (nextStep === "call") {
+                    steps.switchToStep("call");
+                    scrollToFormTop();
+                }
+
+                return;
+            }
+
             if ($button.data("is-submitting")) return;
 
             $button.data("is-submitting", true);
