@@ -189,6 +189,10 @@ export function bindEvents({
 
             branching?.applyFromStep(stepName);
 
+            if (visibility?.applyAnswerRules) {
+                visibility.applyAnswerRules(stepName);
+            }
+
             const nextStep = steps.getNextStep();
             if (nextStep) {
                 steps.switchToStep(nextStep);
