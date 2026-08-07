@@ -308,4 +308,9 @@ export const FORM_CONFIG = {
       "extra_contact"
     ]
   },
+
+  callStep: {
+    redirectUrl: "/test"
+  },
+
 };
