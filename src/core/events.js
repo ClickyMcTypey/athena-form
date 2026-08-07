@@ -314,7 +314,13 @@ export function bindEvents({
             maybeShowBackButton();
             fireStepAttribution();
 
-            branching?.applyFromStep(steps.getCurrentStep());
+            const currentStep = steps.getCurrentStep();
+
+            branching?.applyFromStep(currentStep);
+
+            if (visibility?.applyAnswerRules) {
+                visibility.applyAnswerRules(currentStep);
+            }
 
             const nextStep = steps.getNextStep();
 
