@@ -249,6 +249,17 @@ export const FORM_CONFIG = {
       },
     ],
 
+    answerRules: [
+      {
+        id: "show_call_step",
+        step: "17",
+        field: "hbform_q17_timeline",
+        value: "asap_this_is_a_priority",
+        flag: "show-call-step",
+        action: "enable"
+      }
+    ],
+
     selectors: {
       elements: "[data-athena-show]",
       steps: "[data-athena-step-flag]",
