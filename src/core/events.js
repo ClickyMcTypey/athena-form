@@ -7,6 +7,7 @@ export function bindEvents({
     animations,
     branching,
     attribution,
+    scoring,
 }) {
     function routeToCallStepIfNeeded(currentStep) {
         if (currentStep !== "info") return false;
@@ -282,17 +283,7 @@ export function bindEvents({
 
             const currentStep = steps.getCurrentStep();
 
-            if (
-                currentStep === "info" &&
-                visibility?.hasFlag?.("show-call-step")
-            ) {
-                const nextStep = steps.getNextStep();
-
-                if (nextStep === "call") {
-                    steps.switchToStep("call");
-                    scrollToFormTop();
-                }
-
+            if (routeToCallStepIfNeeded(currentStep)) {
                 return;
             }
 
