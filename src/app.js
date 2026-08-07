@@ -133,7 +133,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 validation,
                 animations,
                 branching,
+                visibility,
                 attribution,
+                scoring,
             });
 
             startSystemLoops();

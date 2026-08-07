@@ -37,7 +37,7 @@ export function createVisibilityController({
     }
 
     function hasFlag(flag) {
-        return state.visibilityFlags.includes(flag);
+        return getVisibilityFlags().includes(String(flag));
     }
 
     function syncFromGlobal() {
@@ -132,13 +132,15 @@ export function createVisibilityController({
     }
 
     function enable(flag, options = {}) {
-        const cleanFlag = normalize(flag);
+        if (!flag) return;
 
-        if (!cleanFlag) return;
+        const flags = getVisibilityFlags();
 
-        if (!state.visibilityFlags.includes(cleanFlag)) {
-            state.visibilityFlags.push(cleanFlag);
+        if (!flags.includes(flag)) {
+            flags.push(flag);
         }
+
+        state.visibilityFlags = flags;
 
         if (options.apply !== false) {
             apply();
@@ -146,11 +148,11 @@ export function createVisibilityController({
     }
 
     function disable(flag, options = {}) {
-        const cleanFlag = normalize(flag);
+        if (!flag) return;
 
-        state.visibilityFlags = state.visibilityFlags.filter((item) => {
-            return item !== cleanFlag;
-        });
+        state.visibilityFlags = getVisibilityFlags().filter(
+            (item) => item !== String(flag)
+        );
 
         if (options.apply !== false) {
             apply();
@@ -178,5 +180,6 @@ export function createVisibilityController({
         reset,
         hasFlag,
         syncFromGlobal,
+        applyAnswerRules
     };
 }
