@@ -202,6 +202,35 @@ export function bindEvents({
         validation.updateStepValidationUI("info");
     });
 
+    function submitFromCallStep(button, postSubmitAction) {
+        const $button = $(button);
+
+        if ($button.data("is-submitting")) return;
+
+        $button.data("is-submitting", true);
+        $button.prop("disabled", true);
+
+        if (window.AthenaForm?.submission?.submit) {
+            window.AthenaForm.submission.submit({
+                postSubmitAction
+            });
+        }
+    }
+
+    $(document).on("click.athenaForm", "[cmd='submit_redirect']", function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        submitFromCallStep(this, "redirect");
+    });
+
+    $(document).on("click.athenaForm", "[cmd='submit_chili']", function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        submitFromCallStep(this, "chili");
+    });
+
     $(document).on("click.athenaForm", "[cmd='proceed']", function (e) {
         const $button = $(this);
         const isLast = $button.is("[last]");
