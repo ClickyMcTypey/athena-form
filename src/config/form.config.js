@@ -58,6 +58,8 @@ export const FORM_CONFIG = {
     "success",
     "error",
     "closed",
+    "call",
+    "call-t3"
   ],
 
   redirectUrls: {
