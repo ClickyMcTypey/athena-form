@@ -6,78 +6,6 @@ export function createVisibilityController({
 }) {
     const visibilityConfig = config.visibility || {};
 
-    function getSelectedValueForRule(stepName, rule) {
-        if (!rule?.field) return null;
-
-        const $step = $(`[step="${stepName}"]`);
-
-        const $checked = $step.find(`[name="${rule.field}"]:checked`);
-
-        if ($checked.length) {
-            return $checked.val();
-        }
-
-        const $field = $step.find(`[name="${rule.field}"]`).first();
-
-        if ($field.length) {
-            return $field.val();
-        }
-
-        return null;
-    }
-
-    function normalizeList(value) {
-        if (!value) return [];
-
-        if (Array.isArray(value)) {
-            return value.map(String).map((item) => item.trim()).filter(Boolean);
-        }
-
-        return String(value)
-            .split(",")
-            .map((item) => item.trim())
-            .filter(Boolean);
-    }
-
-    function ruleMatchesValue(rule, selectedValue) {
-        if (selectedValue === null || selectedValue === undefined) return false;
-
-        const selectedValues = normalizeList(selectedValue);
-
-        const acceptedValues = rule.values
-            ? normalizeList(rule.values)
-            : normalizeList(rule.value);
-
-        return selectedValues.some((value) => acceptedValues.includes(value));
-    }
-
-
-    function applyAnswerRules(stepName) {
-        const rules = visibilityConfig.answerRules || [];
-
-        if (!rules.length) return;
-
-        rules.forEach((rule) => {
-            if (String(rule.step) !== String(stepName)) return;
-            if (!rule.flag) return;
-
-            const selectedValue = getSelectedValueForRule(stepName, rule);
-            const isMatch = ruleMatchesValue(rule, selectedValue);
-
-            if (isMatch) {
-                enable(rule.flag, {
-                    apply: false
-                });
-            } else {
-                disable(rule.flag, {
-                    apply: false
-                });
-            }
-        });
-
-        apply();
-    }
-
     function isEnabled() {
         return visibilityConfig.enabled === true;
     }
@@ -88,6 +16,19 @@ export function createVisibilityController({
 
     function parseFlags(value) {
         return String(value || "")
+            .split(",")
+            .map((item) => item.trim())
+            .filter(Boolean);
+    }
+
+    function normalizeList(value) {
+        if (!value) return [];
+
+        if (Array.isArray(value)) {
+            return value.map(String).map((item) => item.trim()).filter(Boolean);
+        }
+
+        return String(value)
             .split(",")
             .map((item) => item.trim())
             .filter(Boolean);
@@ -108,8 +49,58 @@ export function createVisibilityController({
         return [];
     }
 
+    function getVisibilityFlags() {
+        const flags = state.visibilityFlags || [];
+
+        if (Array.isArray(flags)) {
+            return flags.map(normalize).filter(Boolean);
+        }
+
+        if (typeof flags === "string") {
+            return parseFlags(flags);
+        }
+
+        return [];
+    }
+
     function hasFlag(flag) {
         return getVisibilityFlags().includes(String(flag));
+    }
+
+    function matchesAnyFlag(requiredFlags) {
+        return requiredFlags.some((flag) => hasFlag(flag));
+    }
+
+    function enable(flag, options = {}) {
+        const normalizedFlag = normalize(flag);
+
+        if (!normalizedFlag) return;
+
+        const flags = getVisibilityFlags();
+
+        if (!flags.includes(normalizedFlag)) {
+            flags.push(normalizedFlag);
+        }
+
+        state.visibilityFlags = flags;
+
+        if (options.apply !== false) {
+            apply();
+        }
+    }
+
+    function disable(flag, options = {}) {
+        const normalizedFlag = normalize(flag);
+
+        if (!normalizedFlag) return;
+
+        state.visibilityFlags = getVisibilityFlags().filter(
+            (item) => item !== normalizedFlag
+        );
+
+        if (options.apply !== false) {
+            apply();
+        }
     }
 
     function syncFromGlobal() {
@@ -122,10 +113,64 @@ export function createVisibilityController({
         });
     }
 
-    function matchesAnyFlag(requiredFlags) {
-        return requiredFlags.some((flag) => {
-            return hasFlag(flag);
+    function getSelectedValueForRule(stepName, rule) {
+        if (!rule?.field) return null;
+
+        const $step = $(`[step="${stepName}"]`);
+
+        const $checked = $step.find(`[name="${rule.field}"]:checked`);
+
+        if ($checked.length) {
+            return $checked.val();
+        }
+
+        const $field = $step.find(`[name="${rule.field}"]`).first();
+
+        if ($field.length) {
+            return $field.val();
+        }
+
+        return null;
+    }
+
+    function ruleMatchesValue(rule, selectedValue) {
+        if (selectedValue === null || selectedValue === undefined) return false;
+
+        const selectedValues = normalizeList(selectedValue);
+
+        const acceptedValues = rule.values
+            ? normalizeList(rule.values)
+            : normalizeList(rule.value);
+
+        if (!selectedValues.length || !acceptedValues.length) return false;
+
+        return selectedValues.some((value) => acceptedValues.includes(value));
+    }
+
+    function applyAnswerRules(stepName) {
+        const rules = visibilityConfig.answerRules || [];
+
+        if (!rules.length) return;
+
+        rules.forEach((rule) => {
+            if (String(rule.step) !== String(stepName)) return;
+            if (!rule.flag) return;
+
+            const selectedValue = getSelectedValueForRule(stepName, rule);
+            const isMatch = ruleMatchesValue(rule, selectedValue);
+
+            if (isMatch) {
+                enable(rule.flag, {
+                    apply: false,
+                });
+            } else {
+                disable(rule.flag, {
+                    apply: false,
+                });
+            }
         });
+
+        apply();
     }
 
     function applyElements() {
@@ -203,34 +248,6 @@ export function createVisibilityController({
         window.AthenaForm?.steps?.updateProgressBar?.();
     }
 
-    function enable(flag, options = {}) {
-        if (!flag) return;
-
-        const flags = getVisibilityFlags();
-
-        if (!flags.includes(flag)) {
-            flags.push(flag);
-        }
-
-        state.visibilityFlags = flags;
-
-        if (options.apply !== false) {
-            apply();
-        }
-    }
-
-    function disable(flag, options = {}) {
-        if (!flag) return;
-
-        state.visibilityFlags = getVisibilityFlags().filter(
-            (item) => item !== String(flag)
-        );
-
-        if (options.apply !== false) {
-            apply();
-        }
-    }
-
     function reset() {
         state.visibilityFlags = [];
         apply();
@@ -252,6 +269,6 @@ export function createVisibilityController({
         reset,
         hasFlag,
         syncFromGlobal,
-        applyAnswerRules
+        applyAnswerRules,
     };
 }
