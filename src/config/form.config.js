@@ -255,7 +255,7 @@ export const FORM_CONFIG = {
         step: "17",
         field: "hbform_q17_timeline",
         value: "asap_this_is_a_priority",
-        flag: "show-call-step",
+        flag: "call-flow",
         action: "enable"
       }
     ],
@@ -310,7 +310,7 @@ export const FORM_CONFIG = {
   },
 
   callStep: {
-    redirectUrl: "/test"
+    redirectUrl: "athena.com/test"
   },
 
 };
