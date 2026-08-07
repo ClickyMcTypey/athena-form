@@ -167,6 +167,8 @@ export function createSubmissionController({
         formSchema.writeSnapshot();
       }
 
+      setCallRedirectField(postSubmitAction);
+
       const payload = hubspot.buildSubmissionPayload();
       await hubspot.submitForm(payload);
 
