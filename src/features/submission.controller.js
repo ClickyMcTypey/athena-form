@@ -64,7 +64,9 @@ export function createSubmissionController({
   }
 
   function unlockSubmitButton() {
-    const $submitBtn = $("[cmd='proceed'][last]");
+    const $submitBtn = $(
+      "[cmd='proceed'][last], [cmd='submit_redirect'], [cmd='submit_chili']"
+    );
 
     $submitBtn.data("is-submitting", false);
     $submitBtn.prop("disabled", false);
@@ -152,6 +154,20 @@ export function createSubmissionController({
 
       const payload = hubspot.buildSubmissionPayload();
       await hubspot.submitForm(payload);
+
+      if (postSubmitAction === "redirect") {
+        const redirectUrl = config.callStep?.redirectUrl;
+
+        if (redirectUrl) {
+          window.location.href = redirectUrl;
+          return;
+        }
+
+        console.warn("Call step redirect selected, but no redirectUrl is configured.");
+        state.isSubmitting = false;
+        unlockSubmitButton();
+        return;
+      }
 
       // If tier 3, HubSpot already received the submission.
       // Now stop the ChiliPiper flow and show the custom message.
