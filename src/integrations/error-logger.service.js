@@ -77,6 +77,12 @@ export function createErrorLoggerService({ state }) {
         const output = {};
         const $form = $(SOURCE_FORM_SELECTOR);
 
+        const excludedAllFormDataFields = [
+            "leadformjson",
+            "leadformversion",
+            "cc-num",
+        ];//excluding for error logging
+
         if (!$form.length) return output;
 
         $form.find("input, select, textarea").each(function () {
@@ -84,7 +90,10 @@ export function createErrorLoggerService({ state }) {
             const name = $field.attr("name");
             const type = String($field.attr("type") || "").toLowerCase();
 
-            if ($field.attr("id") === "cc-num") return;
+            const element_ = $field.attr("name") || $field.attr("id");
+            // if ($field.attr("id") === "cc-num") return;
+            if (excludedAllFormDataFields.includes(element_)) return;
+
             if (!name) return;
             if (type === "file") return;
 
