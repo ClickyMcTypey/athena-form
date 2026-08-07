@@ -6,6 +6,7 @@ export function bindEvents({
     validation,
     animations,
     branching,
+    visibility,
     attribution,
     scoring,
 }) {
@@ -262,21 +263,6 @@ export function bindEvents({
 
         validation.updateStepValidationUI("info");
     });
-
-    function submitFromCallStep(button, postSubmitAction) {
-        const $button = $(button);
-
-        if ($button.data("is-submitting")) return;
-
-        $button.data("is-submitting", true);
-        $button.prop("disabled", true);
-
-        if (window.AthenaForm?.submission?.submit) {
-            window.AthenaForm.submission.submit({
-                postSubmitAction
-            });
-        }
-    }
 
     $(document).on("click.athenaForm", "[cmd='submit_redirect']", function (e) {
         e.preventDefault();
