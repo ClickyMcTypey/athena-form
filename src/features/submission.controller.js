@@ -164,13 +164,16 @@ export function createSubmissionController({
         }
 
         console.warn("Call step redirect selected, but no redirectUrl is configured.");
+
         state.isSubmitting = false;
         unlockSubmitButton();
+
+        // Send the user back from loading_chili to the step they submitted from
+        steps.switchToStep(currentStep);
+
         return;
       }
 
-      // If tier 3, HubSpot already received the submission.
-      // Now stop the ChiliPiper flow and show the custom message.
       if (isTier3(scoringResult)) {
         showTier3Message();
 
