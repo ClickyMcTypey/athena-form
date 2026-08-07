@@ -80,7 +80,10 @@ export function createSubmissionController({
     return scoringResult?.tier === "tier_3";
   }
 
-  async function submit() {
+  async function submit(options = {}) {
+
+    const postSubmitAction = options.postSubmitAction || "chili";
+
     if (state.isSubmitting) return;
 
     state.isSubmitting = true;
