@@ -312,7 +312,7 @@ export const FORM_CONFIG = {
   },
 
   callStep: {
-    redirectUrl: "athena.com/test"
+    redirectUrl: "https://athenago.zoom.us/j/89712019245"
   },
 
 };
