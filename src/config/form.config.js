@@ -51,6 +51,15 @@ export const FORM_CONFIG = {
     "success",
   ],
 
+  progressCompleteSteps: [
+    "email",
+    "info",
+    "call",
+    "call-t3",
+    "calendar",
+    "loading_chili"
+  ]
+
   bannedCountries: [
     "ph",
     "vn",
