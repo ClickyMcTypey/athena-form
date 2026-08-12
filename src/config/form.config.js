@@ -279,9 +279,9 @@ export const FORM_CONFIG = {
     outputJsonField: "leadformjson",
     outputVersionField: "leadformversion",
 
-    formVersion: "1.0.2",
-    formEffectivityDate: "2026-08-08",
-    formVersionContext: "Removed all_form_data_json from error logger",
+    formVersion: "1.0.3-callflow",
+    formEffectivityDate: "2026-08-10", //YYYY-MM-DD
+    formVersionContext: "Temporary version - Call Flow, version delayed as of 2026-08-12",
 
     formSelector: "#athn_form",
     stepSelector: "[step]",
@@ -312,7 +312,7 @@ export const FORM_CONFIG = {
   },
 
   callStep: {
-    redirectUrl: "https://athenago.zoom.us/j/89712019245"
+    redirectUrl: "https://athenago.zoom.us/j/89937607407"
   },
 
 };
