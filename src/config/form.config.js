@@ -30,7 +30,20 @@ export const FORM_CONFIG = {
   ],
 
   progressSteps: [
+    "8",
     "9",
+    "9-founders-pricing",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "16-founders-hiring",
+    "17",
+    "18",
+    "18-branch-2",
     "loading",
     "email",
     "info",
@@ -266,9 +279,9 @@ export const FORM_CONFIG = {
     outputJsonField: "leadformjson",
     outputVersionField: "leadformversion",
 
-    formVersion: "1.0.2",
-    formEffectivityDate: "2026-08-08",
-    formVersionContext: "Removed all_form_data_json from error logger",
+    formVersion: "1.0.3",
+    formEffectivityDate: "2026-08-12",
+    formVersionContext: "Enabled Progress Bar on Other Steps",
 
     formSelector: "#athn_form",
     stepSelector: "[step]",
