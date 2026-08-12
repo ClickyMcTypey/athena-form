@@ -58,7 +58,7 @@ export const FORM_CONFIG = {
     "call-t3",
     "calendar",
     "loading_chili"
-  ]
+  ],
 
   bannedCountries: [
     "ph",
