@@ -29,6 +29,19 @@ export const FORM_CONFIG = {
     "closed",
   ],
 
+  conditionalFields: [
+    {
+      field: "hbform_q18_extrahelp",
+      value: "other",
+      targetSelector: '[conditional="hbform_q18_extrahelp"]',
+      secondaryField: "hbform_q18_extrahelp_secondary"
+    }
+  ],
+
+  optionalBlankFields: [
+    "hbform_q18_extrahelp_secondary"
+  ],
+
   progressSteps: [
     "8",
     "9",
@@ -288,9 +301,9 @@ export const FORM_CONFIG = {
     outputJsonField: "leadformjson",
     outputVersionField: "leadformversion",
 
-    formVersion: "1.0.3",
-    formEffectivityDate: "2026-08-12",
-    formVersionContext: "Enabled Progress Bar on Other Steps",
+    formVersion: "1.1.0",
+    formEffectivityDate: "2026-08-14",
+    formVersionContext: "Added Step 18",
 
     formSelector: "#athn_form",
     stepSelector: "[step]",
