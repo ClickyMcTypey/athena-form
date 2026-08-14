@@ -29,13 +29,48 @@ export const FORM_CONFIG = {
     "closed",
   ],
 
+  conditionalFields: [
+    {
+      field: "hbform_q18_extrahelp",
+      value: "other",
+      targetSelector: '[conditional="hbform_q18_extrahelp"]',
+      secondaryField: "hbform_q18_extrahelp_secondary"
+    }
+  ],
+
+  optionalBlankFields: [
+    "hbform_q18_extrahelp_secondary"
+  ],
+
   progressSteps: [
+    "8",
     "9",
+    "9-founders-pricing",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "16-founders-hiring",
+    "17",
+    "18",
+    "18-branch-2",
     "loading",
     "email",
     "info",
     "calendar",
     "success",
+  ],
+
+  progressCompleteSteps: [
+    "email",
+    "info",
+    "call",
+    "call-t3",
+    "calendar",
+    "loading_chili"
   ],
 
   bannedCountries: [
@@ -279,9 +314,9 @@ export const FORM_CONFIG = {
     outputJsonField: "leadformjson",
     outputVersionField: "leadformversion",
 
-    formVersion: "1.0.3-callflow",
-    formEffectivityDate: "2026-08-10", //YYYY-MM-DD
-    formVersionContext: "Temporary version - Call Flow, version delayed as of 2026-08-12",
+    formVersion: "1.1.0",
+    formEffectivityDate: "2026-08-14",
+    formVersionContext: "Added Step 18",
 
     formSelector: "#athn_form",
     stepSelector: "[step]",

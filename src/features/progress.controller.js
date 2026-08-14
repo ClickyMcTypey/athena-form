@@ -1,22 +1,30 @@
-// src/features/progress.controller.js
+function updateProgressBar() {
+  const currentStep = getCurrentStep();
 
-export function createProgressController() {
-  return {
-    update() {
-      const $steps = $("[step]").not(
-        "[step=error], [step=loading], [step=loading_chili], [step=closed], [skip]"
-      );
+  const completeSteps = config.progressCompleteSteps || [];
 
-      const length = $steps.length;
-      if (!length) return;
+  if (completeSteps.includes(String(currentStep))) {
+    $(".progressbar-progress").css("width", "100%");
+    return;
+  }
 
-      const currentStep = this.getCurrentStep?.() || null;
-      const currentElement = $(`[step="${currentStep}"]`)[0];
+  const $steps = $("[step]").not(
+    "[step=error], [step=loading], [step=loading_chili], [step=closed], [step=email], [step=info], [step=calendar], [step=call], [step=call-t3], [skip]"
+  );
 
-      const currentIndex = $steps.index(currentElement) + 1;
-      const percentage = (currentIndex / length) * 100;
+  const length = $steps.length;
+  if (!length) return;
 
-      $(".progressbar-progress").css("width", `${percentage}%`);
-    },
-  };
+  const currentElement = $(`[step="${currentStep}"]`)[0];
+
+  const rawIndex = $steps.index(currentElement);
+
+  if (rawIndex < 0) {
+    return;
+  }
+
+  const currentIndex = rawIndex + 1;
+  const percentage = (currentIndex / length) * 100;
+
+  $(".progressbar-progress").css("width", `${percentage}%`);
 }
