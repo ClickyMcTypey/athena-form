@@ -129,11 +129,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             bindEvents({
                 state,
+                config: FORM_CONFIG,
                 steps,
                 validation,
                 animations,
                 branching,
+                visibility,
                 attribution,
+                scoring,
             });
 
             startSystemLoops();
