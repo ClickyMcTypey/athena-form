@@ -23,7 +23,7 @@ export function createValidationService({
   function getUniqueFieldNames($step) {
     const names = [];
 
-    $step.find("input[name], select[name]").not("[ignore]").each(function () {
+    $step.find("input[name], select[name], textarea[name]").not("[ignore]").each(function () {
       const name = $(this).attr("name");
 
       if (name && !names.includes(name)) {
@@ -285,7 +285,9 @@ export function createValidationService({
   }
 
   function validateTextField($step, name) {
-    const $text = findFieldByName($step, name).filter('[type="text"]');
+    const $text = findFieldByName($step, name).filter(
+      'input[type="text"], textarea'
+    );
 
     if (!$text.length) return null;
 
@@ -293,13 +295,19 @@ export function createValidationService({
 
     $text.each(function () {
       const $field = $(this);
+      const value = String($field.val() || "").trim();
+
+      // Allow configured optional fields to be blank
+      // even if they are hidden or untouched.
+      if (isOptionalBlankField(name, value)) {
+        markValid($field);
+        return;
+      }
 
       if (!shouldValidateField($field)) {
         isValid = false;
         return;
       }
-
-      const value = String($field.val() || "").trim();
 
       if (!value) {
         markInvalid($field);
@@ -311,35 +319,6 @@ export function createValidationService({
         markValid($field);
       }
     });
-
-    function validateTextField($step, name) {
-      const $fields = findFieldByName($step, name).filter(
-        'input[type="text"], textarea'
-      );
-
-      if (!$fields.length) return null;
-
-      let isValid = true;
-
-      $fields.each(function () {
-        const $field = $(this);
-        const value = $field.val();
-
-        if (isOptionalBlankField(name, value)) {
-          markValid($field);
-          return;
-        }
-
-        if (validateText(value)) {
-          markValid($field);
-        } else {
-          markInvalid($field);
-          isValid = false;
-        }
-      });
-
-      return isValid;
-    }
 
     return isValid;
   }
