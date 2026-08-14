@@ -5,6 +5,16 @@ export function createValidationService({
   config,
   animations,
 }) {
+
+  function isOptionalBlankField(name, value) {
+    const optionalBlankFields = config.optionalBlankFields || [];
+
+    return (
+      optionalBlankFields.includes(String(name)) &&
+      String(value || "").trim() === ""
+    );
+  }
+
   function validateEmail(email) {
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return regex.test(String(email).toLowerCase());
@@ -301,6 +311,35 @@ export function createValidationService({
         markValid($field);
       }
     });
+
+    function validateTextField($step, name) {
+      const $fields = findFieldByName($step, name).filter(
+        'input[type="text"], textarea'
+      );
+
+      if (!$fields.length) return null;
+
+      let isValid = true;
+
+      $fields.each(function () {
+        const $field = $(this);
+        const value = $field.val();
+
+        if (isOptionalBlankField(name, value)) {
+          markValid($field);
+          return;
+        }
+
+        if (validateText(value)) {
+          markValid($field);
+        } else {
+          markInvalid($field);
+          isValid = false;
+        }
+      });
+
+      return isValid;
+    }
 
     return isValid;
   }
