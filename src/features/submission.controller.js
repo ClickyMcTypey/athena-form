@@ -11,6 +11,21 @@ export function createSubmissionController({
   errorLogger,
   formSchema
 }) {
+  function setCallRedirectField(postSubmitAction) {
+    const fieldName = "growthtest_202608_chrislivelink";
+    const value = postSubmitAction === "redirect" ? "calledchris" : "";
+
+    let $field = $(`[name="${fieldName}"]`).first();
+
+    if (!$field.length) {
+      $field = $(`<input type="hidden" name="${fieldName}" id="${fieldName}">`);
+      $("#athn_form").append($field);
+    }
+
+    $field.val(value);
+    $field.attr("value", value);
+  }
+
   function hasHoneypotValue() {
     const value = $("[honey]").val();
     return String(value || "").trim() !== "";
@@ -64,7 +79,9 @@ export function createSubmissionController({
   }
 
   function unlockSubmitButton() {
-    const $submitBtn = $("[cmd='proceed'][last]");
+    const $submitBtn = $(
+      "[cmd='proceed'][last], [cmd='submit_redirect'], [cmd='submit_chili']"
+    );
 
     $submitBtn.data("is-submitting", false);
     $submitBtn.prop("disabled", false);
@@ -80,7 +97,10 @@ export function createSubmissionController({
     return scoringResult?.tier === "tier_3";
   }
 
-  async function submit() {
+  async function submit(options = {}) {
+
+    const postSubmitAction = options.postSubmitAction || "chili";
+
     if (state.isSubmitting) return;
 
     state.isSubmitting = true;
@@ -147,11 +167,30 @@ export function createSubmissionController({
         formSchema.writeSnapshot();
       }
 
+      setCallRedirectField(postSubmitAction);
+
       const payload = hubspot.buildSubmissionPayload();
       await hubspot.submitForm(payload);
 
-      // If tier 3, HubSpot already received the submission.
-      // Now stop the ChiliPiper flow and show the custom message.
+      if (postSubmitAction === "redirect") {
+        const redirectUrl = config.callStep?.redirectUrl;
+
+        if (redirectUrl) {
+          window.location.href = redirectUrl;
+          return;
+        }
+
+        console.warn("Call step redirect selected, but no redirectUrl is configured.");
+
+        state.isSubmitting = false;
+        unlockSubmitButton();
+
+        // Send the user back from loading_chili to the step they submitted from
+        steps.switchToStep(currentStep);
+
+        return;
+      }
+
       if (isTier3(scoringResult)) {
         showTier3Message();
 

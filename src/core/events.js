@@ -11,6 +11,66 @@ export function bindEvents({
     attribution,
     scoring,
 }) {
+    function submitFromCallStep(button, postSubmitAction) {
+        const $button = $(button);
+
+        if ($button.data("is-submitting")) return;
+
+        $button.data("is-submitting", true);
+        $button.prop("disabled", true);
+
+        if (window.AthenaForm?.submission?.submit) {
+            window.AthenaForm.submission.submit({
+                postSubmitAction
+            });
+        } else if (window.main?.form?.s) {
+            window.main.form.s({
+                postSubmitAction
+            });
+        }
+    }
+
+    function routeToCallStepIfNeeded(currentStep) {
+        if (currentStep !== "info") return false;
+
+        if (!visibility?.hasFlag?.("call-flow")) return false;
+
+        let scoringResult = null;
+
+        try {
+            if (window.AthenaForm?.scoring?.calculateAndWrite) {
+                scoringResult = window.AthenaForm.scoring.calculateAndWrite();
+            } else if (scoring?.calculateAndWrite) {
+                scoringResult = scoring.calculateAndWrite();
+            }
+        } catch (error) {
+            console.error("Call step scoring failed:", error);
+            return false;
+        }
+
+        const isTier3 = scoringResult?.tier === "tier_3";
+
+        if (isTier3) {
+            visibility.disable?.("show-call-step", { apply: false });
+            visibility.enable?.("show-call-t3-step", { apply: false });
+            visibility.apply?.();
+
+            steps.switchToStep("call-t3");
+            scrollToFormTop();
+
+            return true;
+        }
+
+        visibility.disable?.("show-call-t3-step", { apply: false });
+        visibility.enable?.("show-call-step", { apply: false });
+        visibility.apply?.();
+
+        steps.switchToStep("call");
+        scrollToFormTop();
+
+        return true;
+    }
+
     function getFieldValues(fieldName) {
         const $checkedBoxes = $(`input[type="checkbox"][for="${fieldName}"]:checked`);
 
@@ -191,6 +251,10 @@ export function bindEvents({
 
             branching?.applyFromStep(stepName);
 
+            if (visibility?.applyAnswerRules) {
+                visibility.applyAnswerRules(stepName);
+            }
+
             const nextStep = steps.getNextStep();
             if (nextStep) {
                 steps.switchToStep(nextStep);
@@ -270,6 +334,20 @@ export function bindEvents({
         validation.updateStepValidationUI("info");
     });
 
+    $(document).on("click.athenaForm", "[cmd='submit_redirect']", function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        submitFromCallStep(this, "redirect");
+    });
+
+    $(document).on("click.athenaForm", "[cmd='submit_chili']", function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        submitFromCallStep(this, "chili");
+    });
+
     $(document).on("click.athenaForm", "[cmd='proceed']", function (e) {
         const $button = $(this);
         const isLast = $button.is("[last]");
@@ -277,6 +355,12 @@ export function bindEvents({
         if (isLast) {
             e.preventDefault();
             e.stopImmediatePropagation();
+
+            const currentStep = steps.getCurrentStep();
+
+            if (routeToCallStepIfNeeded(currentStep)) {
+                return;
+            }
 
             if ($button.data("is-submitting")) return;
 
@@ -296,7 +380,13 @@ export function bindEvents({
             maybeShowBackButton();
             fireStepAttribution();
 
-            branching?.applyFromStep(steps.getCurrentStep());
+            const currentStep = steps.getCurrentStep();
+
+            branching?.applyFromStep(currentStep);
+
+            if (visibility?.applyAnswerRules) {
+                visibility.applyAnswerRules(currentStep);
+            }
 
             const nextStep = steps.getNextStep();
 
